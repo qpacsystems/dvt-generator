@@ -1,0 +1,112 @@
+{
+  "_comment": "Q-PAC Total Fan System DVT — stub. Super-system level: MPF + Fan Controller + Panels + Site integration. Sibling MPF and Fan Controller DVTs cover their respective sub-systems.",
+
+  "meta": {
+    "revision": "0.1",
+    "draftStatus": "Draft",
+    "title": "DESIGN VERIFICATION TEST",
+    "productName": "Q-PAC Total Fan System",
+    "subtitle": "Super-system verification — MPF + Fan Controller + Control Panels + site integration",
+    "descriptor": "Total-system DVT. Sub-system qualification is in sibling DVTs.",
+    "headerLine": "{productName} DVT — Rev {revision} ({draftStatus})",
+    "creator": "Systems Engineering",
+
+    "coverRows": [
+      {"label": "Document Type", "value": "Design Verification Test (DVT)"},
+      {"label": "Unit Under Test (UUT)", "value": "Q-PAC Total Fan System — MPF assembly + installed Fan Controller + control panels + site interconnect"},
+      {"label": "Test Bench", "value": "Total-system test bench or representative site mock-up"},
+      {"label": "Release Gate", "value": "Section severity → required sections per Appendix B. Sibling Fan Controller DVT and MPF DVT must pass on the units installed in the UUT before TFS DVT begins."},
+      {"label": "Sibling Documents", "value": "Q-PAC Fan Controller DVT (controller-side); Q-PAC MPF DVT (motorized impeller frame); Premium Panel scenarios doc"},
+      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover. Sections — table-based per-test rows. Tester records measurement in Measure column. Field refresh (Word: Ctrl+A → F9; LibreOffice: Tools → Update → Fields) updates page numbers and TOC P/F mirror. Elaborations in Appendix C. Equipment in Appendix A. Release-gate matrix in Appendix B."},
+      {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
+      {"label": "Date", "value": "________________________"},
+      {"label": "Tester", "value": "________________________"},
+      {"label": "Reviewer / Sign-off", "value": "________________________"},
+      {"label": "Owner (Engineering)", "value": "Systems Engineering"}
+    ],
+
+    "knownIssues": {
+      "heading": "Known Issues",
+      "intro": "System-level xfail entries and corresponding DVT step pass criteria."
+    },
+
+    "externalRefs": [
+      {
+        "code": "fc_dvt",
+        "sectionLetter": "A",
+        "title": "Fan Controller DVT",
+        "intro": "Controller-side qualification is owned by the Q-PAC Fan Controller DVT. The TFS DVT treats the installed Fan Controller as a qualified sub-system.",
+        "linkPlaceholder": "<Confluence Link>",
+        "passCriteria": "Signed Fan Controller DVT on record for the controller serial installed in this TFS.",
+        "attestHeaders": ["Fan Controller SN", "Fan Controller DVT signed (date / signer)"]
+      },
+      {
+        "code": "mpf_dvt",
+        "sectionLetter": "B",
+        "title": "MPF DVT",
+        "intro": "MPF-side qualification is owned by the Q-PAC MPF DVT. The TFS DVT treats the installed MPF as a qualified sub-system.",
+        "linkPlaceholder": "<Confluence Link>",
+        "passCriteria": "Signed MPF DVT on record for the MPF serial installed in this TFS.",
+        "attestHeaders": ["MPF SN", "MPF DVT signed (date / signer)"]
+      }
+    ],
+
+    "appendixA": {
+      "heading": "Appendix A — Equipment",
+      "intro": "All test equipment, fixtures, and instrumentation referenced from test rows."
+    },
+    "appendixB": {
+      "heading": "Appendix B — Release-Gate Matrix",
+      "intro": "Change severity mapping to required DVT sections. Refine with stakeholders before treated as authoritative.",
+      "categoriesTitle": "B.1 Change-severity categories",
+      "matrixTitle": "B.2 Configuration compatibility matrix",
+      "matrixHeaders": ["Configuration", "Status", "Notes"],
+      "matrixColumnWidths": [3000, 2000, 5224]
+    },
+    "appendixC": {
+      "heading": "Appendix C — Elaborations and Rationale",
+      "intro": "Design rationale and known-issue mechanisms referenced by Brief column."
+    }
+  },
+
+  "sections": [
+    {"code": "assy",      "name": "Total System Assembly",         "intro": "Verify the complete assembly with MPF, Fan Controller, and panels integrated."},
+    {"code": "interconnect","name": "Interconnect and Wiring",     "intro": "Verify site-side wiring, terminations, and signal continuity end-to-end."},
+    {"code": "panels",    "name": "Panel Integration Scenarios",   "intro": "End-to-end Premium and Basic control panel scenarios. Operator workflow."},
+    {"code": "ops",       "name": "Operational Scenarios",         "intro": "Full operational scenarios under representative site loads and BMS commands."},
+    {"code": "runlife",   "name": "Long-Run Verification",         "intro": "Extended run-life and stress."}
+  ],
+
+  "steps": [
+    {"section": "assy",        "subref": "1", "header": "Complete-assembly inspection", "brief": "Verify all sub-assemblies installed per drawing; SNs recorded; sibling DVT artifacts attached.",  "criteria": "All SNs recorded; [fc_dvt] and [mpf_dvt] artifacts attached", "measure": ""},
+    {"section": "interconnect","subref": "1", "header": "End-to-end continuity",         "brief": "Verify site-side wiring to BMS / supply / panels per drawing.",                                  "criteria": "All connections per drawing; zero crossed pairs; insulation intact",                "measure": ""},
+    {"section": "panels",      "subref": "1", "header": "Premium Panel full scenarios",  "brief": "Run Premium Panel scenarios end-to-end with operator at panel and BMS connected.",                "criteria": "Each scenario produces documented system behavior; operator UX matches spec",       "measure": ""},
+    {"section": "ops",         "subref": "1", "header": "Site-typical operational run",  "brief": "Operate system at representative duty cycle for 1 h. Log all telemetry.",                          "criteria": "System tracks BMS commands; airflow per spec; no unexpected alarms; logs complete", "measure": ""},
+    {"section": "runlife",     "subref": "1", "header": "24 h endurance",                "brief": "Run system continuously for 24 h. Log everything.",                                                 "criteria": "Zero drift; zero unexpected faults; rails and currents stable; logs complete",      "measure": ""}
+  ],
+
+  "knownIssues": [],
+
+  "elaborations": [
+    {"ref": "Sub-system DVT dependency", "text": "Both [fc_dvt] and [mpf_dvt] must pass on the actual units installed in the TFS UUT before TFS DVT begins. TFS does not duplicate sub-system coverage; it exercises only emergent system-level behavior."}
+  ],
+
+  "equipment": [
+    {"name": "Site-mock BMS",         "action": "BMS-side commands and telemetry observation",  "spec": "Per site spec or representative simulator"},
+    {"name": "Anemometer / airflow rig","action": "Total airflow verification",                "spec": "Per airflow-measurement standard"},
+    {"name": "Power analyzer",         "action": "Site-side current and quality logging",       "spec": "Calibrated, traceable"}
+  ],
+
+  "releaseGate": {
+    "categories": [
+      {"id": "1", "name": "Site-side wiring change",      "required": "Full [interconnect] + sample [ops]"},
+      {"id": "2", "name": "Panel scenario change",        "required": "Full [panels] + sample [ops]"},
+      {"id": "3", "name": "Sub-system change (FC or MPF)","required": "Section A or B re-signed + full [ops] + [runlife]"},
+      {"id": "4", "name": "Combined system release",      "required": "Sections A and B re-signed + full DVT (C through G)"}
+    ],
+    "matrix": [
+      {"cells": ["Standard configuration", "Current", "Initial release target."]},
+      {"cells": ["Custom configuration",   "Per quote", "Add row when configuration enters DVT."]}
+    ]
+  }
+}

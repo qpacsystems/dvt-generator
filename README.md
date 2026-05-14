@@ -1,4 +1,26 @@
-# DVT Generator
+# DVT Generator — Q-PAC fork
+
+This is the **Q-PAC fork** of the [DVT Generator](https://github.com/kandersonqpac/DVT-generator) (upstream URL TBD). It carries Q-PAC product DVT data files alongside the engine:
+
+| File | DVT |
+| --- | --- |
+| `dvt_data.json` | Q-PAC Fan Controller DVT (primary) |
+| `dvt_data_mpf.json` | Q-PAC MPF DVT (stub) |
+| `dvt_data_tfs.json` | Q-PAC Total Fan System DVT (stub) |
+
+Engine improvements live upstream; pull them in via `git fetch upstream && git merge upstream/main`. Q-PAC-specific content stays here. Public content only — internal-only details (Jira IDs, security keys, source-file paths, supplier names where sensitive) are scrubbed from the data files before commit.
+
+Build any DVT:
+
+```bash
+node build_dvt.js                    # builds Fan Controller (default dvt_data.json)
+node build_dvt.js dvt_data_mpf.json  # builds MPF
+node build_dvt.js dvt_data_tfs.json  # builds Total Fan System
+```
+
+The rest of this README is the engine's upstream documentation.
+
+---
 
 Generate compact table-format Design Verification Test documents (`.docx`) from a JSON data file. One generator, one consistent layout — use it for any product DVT, with content per-DVT in its own JSON file. Suggested use: fork this repo as a template for each new DVT, or keep one repo and one JSON per product.
 

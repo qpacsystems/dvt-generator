@@ -1,0 +1,108 @@
+{
+  "_comment": "Q-PAC MPF DVT — stub. Section structure scaffolded; content TBD. Fan Controller is treated as black box (covered by dvt_data.json).",
+
+  "meta": {
+    "revision": "0.1",
+    "draftStatus": "Draft",
+    "title": "DESIGN VERIFICATION TEST",
+    "productName": "Q-PAC MPF",
+    "subtitle": "Motorized Impeller Frame — system-level verification (frame, motors, harnesses, panels)",
+    "descriptor": "System-level DVT. Fan Controller treated as black box per Q-PAC Fan Controller DVT.",
+    "headerLine": "{productName} DVT — Rev {revision} ({draftStatus})",
+    "creator": "Mechanical Engineering",
+
+    "coverRows": [
+      {"label": "Document Type", "value": "Design Verification Test (DVT)"},
+      {"label": "Unit Under Test (UUT)", "value": "Q-PAC MPF (Motorized Impeller Frame) — complete system: frame, motors, harnesses, Fan Controller (as installed), control panels"},
+      {"label": "Test Bench", "value": "MPF system bench — anemometer, airflow chamber, motor instrumentation, BMS simulator"},
+      {"label": "Release Gate", "value": "Section severity → required sections per Appendix B. Sibling Fan Controller DVT must pass on the controller installed in the UUT before MPF DVT begins."},
+      {"label": "Sibling Documents", "value": "Q-PAC Fan Controller DVT (controller-side, treats MPF as load); Total Fan System DVT (super-system)"},
+      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover. Sections — table-based per-test rows. Tester records measurement in Measure column. Field refresh (Word: Ctrl+A → F9; LibreOffice: Tools → Update → Fields) updates page numbers and TOC P/F mirror. Elaborations in Appendix C. Equipment in Appendix A. Release-gate matrix in Appendix B."},
+      {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
+      {"label": "Date", "value": "________________________"},
+      {"label": "Tester", "value": "________________________"},
+      {"label": "Reviewer / Sign-off", "value": "________________________"},
+      {"label": "Owner (Engineering)", "value": "Mechanical Engineering"}
+    ],
+
+    "knownIssues": {
+      "heading": "Known Issues",
+      "intro": "Suite-side xfail entries and corresponding DVT step pass criteria."
+    },
+
+    "externalRefs": [
+      {
+        "code": "fc_dvt",
+        "sectionLetter": "A",
+        "title": "Fan Controller DVT",
+        "intro": "Controller-side qualification is owned by the Q-PAC Fan Controller DVT. The MPF DVT treats the installed Fan Controller as a black box; controller-internal behavior is not repeated here.",
+        "linkPlaceholder": "<Confluence Link>",
+        "passCriteria": "Signed Fan Controller DVT on record for the controller serial installed in this MPF assembly. Signed copy attached as artifact.",
+        "attestHeaders": ["Fan Controller SN", "Fan Controller DVT signed (date / signer)"]
+      }
+    ],
+
+    "appendixA": {
+      "heading": "Appendix A — Equipment",
+      "intro": "All test equipment, fixtures, and instrumentation referenced from test rows."
+    },
+    "appendixB": {
+      "heading": "Appendix B — Release-Gate Matrix",
+      "intro": "Change severity mapping to required DVT sections. Refine with stakeholders before treated as authoritative.",
+      "categoriesTitle": "B.1 Change-severity categories",
+      "matrixTitle": "B.2 Variant compatibility matrix",
+      "matrixHeaders": ["MPF Variant", "Status", "Notes"],
+      "matrixColumnWidths": [3000, 2000, 5224]
+    },
+    "appendixC": {
+      "heading": "Appendix C — Elaborations and Rationale",
+      "intro": "Design rationale and known-issue mechanisms referenced by Brief column."
+    }
+  },
+
+  "sections": [
+    {"code": "mech",   "name": "Mechanical / Pre-energize",       "intro": "De-energized inspection of frame, motors, harnesses. Catches assembly defects that destroy hardware or invalidate downstream measurements."},
+    {"code": "motor",  "name": "Motor Functional (per-motor)",   "intro": "Exercise each motor individually — direction, speed, fault-status reporting."},
+    {"code": "system", "name": "Multi-Motor System Behavior",    "intro": "All motors energized together. Coordination, fault aggregation, balance."},
+    {"code": "press",  "name": "Pressure and Airflow",           "intro": "System-level airflow verification with anemometer cross-check against firmware-reported airflow."},
+    {"code": "panel",  "name": "Panel Integration",              "intro": "Premium and Basic control panel integration scenarios."},
+    {"code": "soak",   "name": "System Soak",                    "intro": "Extended run-life under representative load."}
+  ],
+
+  "steps": [
+    {"section": "mech",   "subref": "1",   "header": "Frame and motor mounting",     "brief": "Inspect frame integrity, motor mounts, harness routing.",                                "criteria": "Per assembly drawing; no visible damage; fasteners at torque", "measure": ""},
+    {"section": "motor",  "subref": "1.1", "header": "Motor spin direction",         "brief": "Energize each motor individually; verify rotation direction matches expected.",          "criteria": "All motors rotate in documented direction; no scraping or imbalance",                       "measure": ""},
+    {"section": "motor",  "subref": "1.2", "header": "Motor speed response",         "brief": "Step speed command 0 → max via Fan Controller; observe each motor in turn.",             "criteria": "Each motor tracks command within documented response time; no overshoot or oscillation",    "measure": ""},
+    {"section": "motor",  "subref": "1.3", "header": "Motor fault reporting",        "brief": "Disconnect a motor; verify Fan Controller reports MOTOR n STATUS fault and alarm relay engages.", "criteria": "Disconnected motor shows fault; alarm relay K1A/K1B per spec; ALARM_CODE matches",  "measure": ""},
+    {"section": "system", "subref": "1",   "header": "All-motor coordinated speed",  "brief": "Command all motors to common speed; verify Fan Controller reports per-motor airflow.",   "criteria": "All motors at command; per-motor airflow within ±10% of nominal",                          "measure": ""},
+    {"section": "press",  "subref": "1",   "header": "Anemometer cross-check",       "brief": "At AI1 = 10 V, 5 min steady-state, compare anemometer reading vs Modbus QFAN_AIRFLOW.",   "criteria": "Anemometer and QFAN_AIRFLOW agree within ±10% of each other and within rated tolerance",   "measure": ""},
+    {"section": "panel",  "subref": "1",   "header": "Premium Panel scenario set",   "brief": "Run Premium Panel scenarios per [fc_dvt] Section I cross-references.",                 "criteria": "Each scenario produces documented MPF behavior; no panel-side errors",                     "measure": ""},
+    {"section": "soak",   "subref": "1",   "header": "8 h continuous run",           "brief": "Run MPF at nominal speed for 8 h. Log motor currents, airflow, alarms.",               "criteria": "Zero unexpected faults; airflow drift bounded; motor currents stable",                     "measure": ""}
+  ],
+
+  "knownIssues": [],
+
+  "elaborations": [
+    {"ref": "[fc_dvt] dependency", "text": "Fan Controller DVT must pass on the controller installed in this MPF before MPF DVT begins. Controller-internal behavior is not exercised here."}
+  ],
+
+  "equipment": [
+    {"name": "Airflow chamber + anemometer", "action": "System airflow cross-check ([press.1])",         "spec": "Per applicable airflow-measurement standard; calibrated"},
+    {"name": "Motor current clamp",          "action": "Per-motor current observation",                  "spec": "True-RMS, calibrated"},
+    {"name": "BMS simulator",                "action": "Premium/Basic Panel scenarios ([panel.1])",      "spec": "Configurable per Panel scenario doc"}
+  ],
+
+  "releaseGate": {
+    "categories": [
+      {"id": "1", "name": "Motor or harness change",       "required": "Full [motor] + [system]"},
+      {"id": "2", "name": "Frame change",                  "required": "Full [mech] + [system]"},
+      {"id": "3", "name": "Fan Controller change",         "required": "Section A re-signed + spot-check [system], [press]"},
+      {"id": "4", "name": "Panel scenario / BMS-side change","required": "Full [panel] + sample [system]"},
+      {"id": "5", "name": "Combined release",              "required": "Full DVT (B through G) + Fan Controller DVT regression"}
+    ],
+    "matrix": [
+      {"cells": ["Standard MPF",  "Current", "Initial release target."]},
+      {"cells": ["Future variant","TBD",     "Add row when variant enters DVT."]}
+    ]
+  }
+}

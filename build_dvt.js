@@ -136,7 +136,18 @@ const meta = data.meta || {};
 
 // ---------- Lint ----------
 // Warnings (non-fatal) and errors (fatal). All check the post-expansion data.
+// validRefsAndPrefixes holds every step ref AND every prefix of every step ref
+// — so "D.1" passes if any step starts with "D.1." (sub-section reference),
+// "F.6" passes if F.6.x exists, etc. Removes false positives from sub-section
+// labels and parameter-name references while still catching real typos.
 const allRefs = new Set((data.steps || []).map((s) => s.ref));
+const validRefsAndPrefixes = new Set(allRefs);
+for (const ref of allRefs) {
+  const parts = ref.split('.');
+  for (let i = parts.length - 1; i >= 1; i--) {
+    validRefsAndPrefixes.add(parts.slice(0, i).join('.'));
+  }
+}
 const lintWarnings = [];
 const lintErrors = [];
 
@@ -145,10 +156,10 @@ function lintString(s, where) {
   for (const m of s.matchAll(/\[([A-Za-z_]\w*)(?:\.[\w.-]+)?\]/g)) {
     lintWarnings.push(`Unresolved cross-ref ${m[0]} in ${where}`);
   }
-  // Letter-style refs like "D.1.1" that don't match a known step
+  // Letter-style refs like "D.1.1" that don't match a known step (or sub-section prefix)
   for (const m of s.matchAll(/\b([A-Z])\.(\d+(?:\.\d+)*)\b/g)) {
     const ref = `${m[1]}.${m[2]}`;
-    if (!allRefs.has(ref)) {
+    if (!validRefsAndPrefixes.has(ref)) {
       lintWarnings.push(`Unknown ref "${ref}" in ${where} — stale cross-ref?`);
     }
   }
@@ -329,19 +340,18 @@ if (meta.descriptor) coverPara.push(new Paragraph({ spacing: { before: 60, after
 coverPara.push(coverTable);
 
 // ============ Known-issues, equipment, release-gate tables ============
-const KI_W = [3800, 1500, 2300, 2624];
+const KI_W = [4400, 2800, 3024]; // Defect / Suite test / DVT step — sums 10224
 const knownIssuesTable = new Table({
   width: { size: CONTENT_W, type: WidthType.DXA },
   columnWidths: KI_W,
   rows: [
-    new TableRow({ tableHeader: true, children: ['Defect', 'Jira', 'Suite test', 'DVT step'].map((label, i) => cell(label, KI_W[i], { bold: true, fill: HEADER_FILL })) }),
+    new TableRow({ tableHeader: true, children: ['Defect', 'Suite test', 'DVT step'].map((label, i) => cell(label, KI_W[i], { bold: true, fill: HEADER_FILL })) }),
     ...(data.knownIssues || []).map((ki, i) => new TableRow({
       cantSplit: true,
       children: [
         cell(ki.defect, KI_W[0], { fill: i % 2 ? ALT_FILL : undefined }),
-        cell(ki.jira, KI_W[1], { fill: i % 2 ? ALT_FILL : undefined }),
-        cell(ki.suite, KI_W[2], { fill: i % 2 ? ALT_FILL : undefined }),
-        cell(ki.dvt, KI_W[3], { fill: i % 2 ? ALT_FILL : undefined }),
+        cell(ki.suite, KI_W[1], { fill: i % 2 ? ALT_FILL : undefined }),
+        cell(ki.dvt, KI_W[2], { fill: i % 2 ? ALT_FILL : undefined }),
       ],
     })),
   ],

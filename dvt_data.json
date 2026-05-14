@@ -1,122 +1,252 @@
 {
-  "_comment": "Generic example DVT — exercises every feature of the generator (interpolation, cross-refs, external refs, lint). Copy this file, rename, and edit for a new product. The schema is also documented in dvt_data_template.json.",
-
   "meta": {
-    "revision": "0.1",
+    "revision": "1.14",
     "draftStatus": "Draft",
+    "date": "5/12/2026",
     "title": "DESIGN VERIFICATION TEST",
-    "productName": "Example Device",
-    "subtitle": "Sub-Assembly Boundary — Functional and Stress Verification",
-    "descriptor": "Generic example DVT — copy this file and edit meta + content to spin up a real product DVT",
+    "productName": "Q-PAC Fan Controller",
+    "subtitle": "Complete Assembly — Mainboard, MIBs, Bus Bar, Fuses, Connectors, Air Tubes, Wiring",
+    "descriptor": "Test Procedure for Electronics Release Qualification on FCAT Bench",
     "headerLine": "{productName} DVT — Rev {revision} ({draftStatus})",
-    "creator": "Engineering",
-
+    "creator": "Electronics Engineering",
     "coverRows": [
       {"label": "Document Type", "value": "Design Verification Test (DVT)"},
-      {"label": "Unit Under Test (UUT)", "value": "Example Device — PN XXXXXX, Rev A (replace with real description)"},
-      {"label": "Test Bench", "value": "Example bench / fixture name and key instruments"},
-      {"label": "Release Gate", "value": "Section severity → required sections per Appendix B. Section A (external Sub-Assembly DVT) must be signed off before this DVT begins."},
-      {"label": "Sibling Documents", "value": "Sub-Assembly DVT (PCB-level, see Section A); other related DVTs and reports"},
-      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover. Section A = external reference. Sections B onward = table-based per-test rows. Tester records measurement in Measure column. Field refresh (Word: Ctrl+A → F9; LibreOffice: Tools → Update → Fields) updates page numbers and TOC P/F mirror."},
+      {"label": "Unit Under Test (UUT)", "value": "Q-PAC Fan Controller — complete assembly (PN 1704165, REV3): enclosure, mainboard PCB, MIB boards, bus bar + fuses, connectors (CN3-CN5 and internal harnesses), pressure-transducer air tubes, wiring"},
+      {"label": "Test Bench", "value": "Fan Controller Automated Tester (FCAT) — pressure generator + NI LabVIEW + SCPI"},
+      {"label": "Release Gate", "value": "Section severity → required sections per Appendix B. Section A (external Main Board DVT) and Section B (external MIB DVT) must be signed off before this DVT begins."},
+      {"label": "Sibling Documents", "value": "Main Board DVT (PCB-level, see Section A); MIB DVT (see Section B); Q-PAC_MPF_DVT (system-level, treats Fan Controller as black box)"},
+      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover. Sections A and B = external references. Sections C–J = table-based per-test rows. Tester records measurement in Measure column. Field refresh (Word: Ctrl+A → F9; LibreOffice: Tools → Update → Fields) updates page numbers and TOC P/F mirror. Elaborations in Appendix C. Equipment in Appendix A. Release-gate matrix in Appendix B."},
       {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
       {"label": "Date", "value": "________________________"},
       {"label": "Tester", "value": "________________________"},
       {"label": "Reviewer / Sign-off", "value": "________________________"},
-      {"label": "Owner (Engineering)", "value": "Engineering"}
+      {"label": "Owner (Engineering)", "value": "Electronics Engineering"}
     ],
-
     "knownIssues": {
-      "heading": "Known Issues",
-      "intro": "Suite-side xfail entries and corresponding DVT step pass criteria. Each row remains until fix releases and XPASSes."
+      "heading": "Known Issues — v1.2.0 Firmware",
+      "intro": "Suite-side xfail entries and corresponding DVT step pass criteria. Each row remains until fix releases and XPASSes. New issues appended in same four-column shape."
     },
-
     "externalRefs": [
       {
-        "code": "sub_assy_dvt",
         "sectionLetter": "A",
-        "title": "Sub-Assembly DVT",
-        "intro": "Sub-assembly qualification (PCB-level functional, AOI) is owned by the external Sub-Assembly DVT. This document begins at the assembled-unit boundary; bare-board coverage is not repeated here.",
-        "linkPlaceholder": "<External Link>",
-        "passCriteria": "Signed Sub-Assembly DVT on record for the sub-assembly serial number installed in this unit. Signed copy attached as artifact. Section B does not begin until Section A artifact is present.",
-        "attestHeaders": ["Sub-assembly SN", "Sub-Assembly DVT signed (date / signer)"]
+        "code": "mainboard_dvt",
+        "title": "Main Board DVT",
+        "intro": "PCB-level qualification of the bare mainboard is owned by the external Main Board DVT. This document begins at the assembled-controller boundary; bare-board electrical functional, HiPot, ICT, AOI are not repeated here.",
+        "linkPlaceholder": "<Confluence Link>",
+        "passCriteria": "Signed Main Board DVT on record for the mainboard serial number installed in this Fan Controller assembly. Signed copy attached to this run as artifact. Section B does not begin until Section A artifact is present.",
+        "attestHeaders": ["Mainboard SN", "Main Board DVT signed (date / signer)"]
+      },
+      {
+        "sectionLetter": "B",
+        "code": "mib_dvt",
+        "title": "MIB DVT",
+        "intro": "PCB-level qualification of each MIB board is owned by the external MIB DVT. MIB-board electrical functional, AOI, and SPI-side functional testing are owned by that document and not repeated here. This DVT begins MIB coverage at the assembled-controller / FCAT-fixture boundary in Section E.",
+        "linkPlaceholder": "<Confluence Link>",
+        "passCriteria": "Signed MIB DVT on record for every MIB serial number installed in this Fan Controller assembly. Signed copies attached to this run as artifacts. Section C does not begin until all MIB DVT artifacts are present.",
+        "attestHeaders": ["MIB SN(s) — list all installed", "MIB DVTs signed (dates / signers)"]
       }
     ],
-
     "appendixA": {
       "heading": "Appendix A — Equipment",
       "intro": "All test equipment, fixtures, and instrumentation referenced from test rows."
     },
     "appendixB": {
       "heading": "Appendix B — Release-Gate Matrix",
-      "intro": "Change severity mapping to required DVT sections. Refine with stakeholders before treated as authoritative.",
-      "categoriesTitle": "B.1 Change-severity categories",
-      "matrixTitle": "B.2 Variant compatibility matrix",
-      "matrixHeaders": ["Variant", "Status", "Notes"],
-      "matrixColumnWidths": [2400, 2000, 5824]
+      "intro": "Change severity mapping to required DVT sections. Straw-man — Engineering to refine with Manufacturing Engineering, Quality, System DVT owner. When in doubt, table requires section.",
+      "categoriesTitle": "Change-severity categories",
+      "matrixTitle": "Backward-compatibility matrix (mainboard × MIB rev)",
+      "matrixHeaders": ["Mainboard \\ MIB", "MIB Rev 1", "MIB Rev 2", "MIB Rev 3 (current)", "Notes"],
+      "matrixColumnWidths": [2200, 2000, 2000, 2000, 2024]
     },
     "appendixC": {
       "heading": "Appendix C — Elaborations and Rationale",
-      "intro": "Context and rationale referenced by Brief column. Listed by ref or topic."
+      "intro": "Design rationale and known-issue mechanisms referenced by Brief column. Listed by table reference or topic."
     }
   },
-
-  "sections": [
-    {"code": "mech",        "name": "Mechanical / Pre-energize Checks", "intro": "Run de-energized before mounting in the test fixture. Catches assembly defects that destroy hardware or invalidate downstream measurements at first power-up."},
-    {"code": "func",        "name": "Functional Bench Tests",            "intro": "Exercise documented interfaces with UUT in the test fixture. Tolerances trace to the product specification."},
-    {"code": "stress",      "name": "Stress and Environmental",          "intro": "Power-cycle and soak. Catches drift-class defects that single-shot tests miss."},
-    {"code": "integration", "name": "Integration Cross-Checks",          "intro": "Cross-checks at system level. Run only after Sections [mech]–[stress] pass on bench."}
-  ],
-
   "steps": [
-    {"section": "mech", "subref": "1", "header": "Visual inspection",   "brief": "Inspect enclosure, harness, fastener seating with light and loupe.", "criteria": "No visible damage; all fasteners at spec torque; cable ties tight", "measure": ""},
-    {"section": "mech", "subref": "2", "header": "Connector seating",   "brief": "Tug-test every external connector and internal harness mate.",       "criteria": "All seated; latches engaged; tug-test holds; no connector damage", "measure": ""},
-    {"section": "mech", "subref": "3", "header": "Insulation (Megger)", "brief": "Apply 500 VDC line-to-chassis for 60 s with signal cables disconnected.", "criteria": "≥100 MΩ at every measurement point", "measure": ""},
+    {"ref":"C.1","header":"Enclosure and harness visual","brief":"Inspect enclosure, panels, harness routing, controller mounting with light and loupe.","criteria":"No visible damage; panel screws at torque; PCB on 4 screws; ties tight","measure":""},
+    {"ref":"C.2","header":"Bus bar torque","brief":"Torque each bus bar lug with calibrated wrench; verify clearance per drawing. Top fire/arc-fault risk.","criteria":"All lugs at spec torque; clearance per drawing; no debris/corrosion","measure":""},
+    {"ref":"C.3","header":"Fuse class and rating","brief":"Verify fuse class, V, A match nameplate; no substitutions.","criteria":"All fuses match nameplate class/V/A","measure":""},
+    {"ref":"C.4","header":"Connector seating","brief":"Tug-test CN3, CN4, CN5 and internal connectors. Visual latch check insufficient.","criteria":"All seated; latches engaged; tug-test holds","measure":""},
+    {"ref":"C.5","header":"Pressure tube routing","brief":"Inspect PT air tubes: routing, port mapping, fittings; optional leak test.","criteria":"Per drawing; no kinks; fittings tight; leak holds within transducer spec","measure":""},
+    {"ref":"C.6","header":"Harness wiring integrity","brief":"Inspect routing, strain relief, labels; verify no bare conductors or crossed pairs. AI1+/AI1− swap is documented field failure.","criteria":"Per harness map; zero bare; reliefs engaged; labels match BoM","measure":""},
+    {"ref":"C.7","header":"Megger insulation","brief":"Megger L1/L2/L3/neutral/bus to chassis at 500 VDC for 60 s; signal cables disconnected.","criteria":"≥100 MΩ each point","measure":""},
+    {"ref":"C.8","header":"Post-Megger DMM sanity","brief":"DMM bus-GND, AI1 and AO1 polarity, K1 rest state.","criteria":"Bus-GND >100 MΩ; pairs not crossed; K1 at rest","measure":""},
 
-    {"section": "func", "subref": "1.1", "header": "Power-on banner",      "brief": "Apply nominal supply; capture boot banner over console.",                                "criteria": "Banner ≤ 2 s; identity string matches expected build; zero framing errors over 60 s idle", "measure": ""},
-    {"section": "func", "subref": "1.2", "header": "Idle rail voltages",   "brief": "DMM-measure each rail at nominal supply with UUT idle.",                                  "criteria": "Each rail within spec; idle current ≤ documented max",                                    "measure": ""},
-    {"section": "func", "subref": "1.3", "header": "Supply sweep",         "brief": "Sweep supply ±10% in 1 V steps with 30 s dwell. Log rails each step.",                     "criteria": "Rails within [func.1.2] tolerances at every step; no brownout, reset, or comm drop",      "measure": ""},
-    {"section": "func", "subref": "2.1", "header": "Comms identity read",  "brief": "Read identity registers via primary comm interface at default address.",                  "criteria": "Identity values match expected; zero frame/parity/CRC errors over 5 min",                 "measure": ""},
-    {"section": "func", "subref": "2.2", "header": "Sustained polling",    "brief": "Continuous polling at production rate for 60 s. Repeat [func.2.1] under load.",            "criteria": "Zero exceptions, retries, or framing errors; identity reads stable",                      "measure": ""},
+    {"ref":"D.1.1","header":"Idle rail voltages","brief":"DMM 3.3 V, 12 V, 24 V, V_RECT at idle, CN3=24 VDC.","criteria":"3.3 V: 3.1–3.4; 12 V/24 V: ±5%; V_RECT: 30.1–33.4; idle ≤250 mA","measure":""},
+    {"ref":"D.1.2","header":"On-board rail monitors","brief":"Read rail-monitor ADC via console; compare to DMM. Drifted monitor was implicated in a prior cold-start regression — guard against recurrence.","criteria":"Each monitor within ±2% of DMM","measure":""},
+    {"ref":"D.1.3","header":"CN3 input sweep","brief":"Sweep CN3 22–26 VAC and 22–26 VDC in 1 V steps, 30 s dwell; log rails.","criteria":"Rails within D.1.1; no trip, brownout, comm drop","measure":""},
+    {"ref":"D.1.4","header":"Line frequency","brief":"Sweep CN3 24 VAC 50–60 Hz in 2 Hz steps; verify firmware-reported frequency.","criteria":"Within ±2% applied each step","measure":""},
+    {"ref":"D.2.1","header":"Console UART boot banner","brief":"Connect 3.3 V TTL UART; capture boot banner.","criteria":"Banner ≤2 s; IDN matches Test fw 2.0.0 string; zero framing/parity over 60 s","measure":""},
+    {"ref":"D.2.2","header":"Console command sequence","brief":"Issue rail, AI/AO setpoint, DAC, EEPROM commands; capture responses.","criteria":"All return expected; zero retries in 100-cmd sequence","measure":""},
+    {"ref":"D.3.1","header":"Modbus identity read","brief":"Master 9600 8N1; read IDN and identity registers at default address.","criteria":"Identity reads; rev REV3; firmware match; zero frame/parity/CRC errors 5 min","measure":""},
+    {"ref":"D.3.2","header":"RS-485 echo string","brief":"Send \"0123456789\" via echo register; read back.","criteria":"Byte-identical; zero retries","measure":""},
+    {"ref":"D.3.3","header":"RS-485 termination sweep","brief":"Vary termination (absent, single-end, both-end 120 Ω); capture differential waveform.","criteria":"Rise/fall ≤ transceiver spec worst case; zero corrupted in 1000-frame burst","measure":""},
+    {"ref":"D.4.1","header":"AI1 mid-scale calibration","brief":"Drive AI1 with calibrated 5.00 V ±1%; read firmware value.","criteria":"5.00 V ±2%","measure":""},
+    {"ref":"D.4.2","header":"AI1 three-point linearity","brief":"Drive AI1 with 3 random voltages in 1–10 V at 1% precision.","criteria":"All 3 within ±2% applied","measure":""},
+    {"ref":"D.4.3","header":"AI1 shorted and floating","brief":"Drive AI1 shorted to AI1− and disconnected; record reported.","criteria":"Short: 0.00 V ±2% FS; Float: in documented floating region, not commanded speed","measure":""},
+    {"ref":"D.5.1","header":"A1_OUTPUT linearity","brief":"Set A1_OUTPUT to 3 random V in 1–5 V; measure at 5 mV.","criteria":"All 3 within ±4% commanded","measure":""},
+    {"ref":"D.5.2","header":"A1_OUTPUT comparator threshold","brief":"Step DAC ±200 mV around 4.00 V; verify comparator transitions. Drift causes misapplied-AO behavior.","criteria":"Deterministic transition; no chatter; 4.00 V ±2%","measure":""},
+    {"ref":"D.5.3","header":"A1_OUTPUT source selector","brief":"Toggle selector between source 1 (4 V) and source 2 (1 V); confirm DAC follows. Stuck selector is the in-circuit analog of the misapplied-AO failure mode.","criteria":"Pos 1: 4 V ±4%; Pos 2: 1 V ±4%; toggle latency in spec","measure":""},
+    {"ref":"D.5.4","header":"A1_OUTPUT feedback ADC","brief":"Read feedback ADC while sweeping DAC; compare at 3 points from D.5.1.","criteria":"Feedback within ±4% commanded each point","measure":""},
+    {"ref":"D.6.1","header":"AIRFLOW_OUTPUT linearity","brief":"Set AIRFLOW_OUTPUT to 3 random V in 1–10 V; measure at 5 mV.","criteria":"All 3 within ±4% commanded","measure":""},
+    {"ref":"D.7.1","header":"Digital input thresholds","brief":"Sweep each DI 0.0–3.3 V in 0.05 V steps; record transition.","criteria":"HIGH ≥3.00 V; LOW ≤0.1 V; hysteresis in spec","measure":""},
+    {"ref":"D.8.1","header":"Digital output levels","brief":"Command each DO HIGH/LOW; measure no-load and 10 kΩ.","criteria":"HIGH > (3.3 V − 300 mV) both loads; LOW <0.1 V both","measure":""},
+    {"ref":"D.8.2","header":"K1 alarm relay cycling","brief":"Cycle K1 50× via console; DMM K1A/K1B/K1C.","criteria":"50 cycles transfer correctly; no misses; bounce in debounce window","measure":""},
+    {"ref":"D.9.1","header":"Mainboard PT linearity","brief":"Apply 0.0–10.0 inWc in 2.5 steps with calibrated pressure generator, 30 s dwell. Guards v1.2.0 PT type detection and SPI integration regression.","criteria":"Within transducer spec each step; monotonic; PT type detection reports expected vendor","measure":""},
+    {"ref":"D.9.2","header":"Mainboard PT noise","brief":"Hold 5.0 inWc; sample at 10 Hz for 5 min; compute mean, std dev.","criteria":"Std dev in transducer noise spec; mean within ±1% of 5.0","measure":""},
+    {"ref":"D.10.1","header":"Accelerometer rest reading","brief":"Mainboard flat; read 3 axes via console.","criteria":"Each axis 970–1030 mg","measure":""},
+    {"ref":"D.10.2","header":"Accelerometer tilt cross-check","brief":"Tilt 90° about X then Y; re-read. v1.2.0 added board-rev-dependent CS selection.","criteria":"Values match expected ±1 g within tilt accuracy","measure":""},
+    {"ref":"D.11.1","header":"EEPROM persistence","brief":"Write \"test\" to EEPROM scratch; power-cycle; re-read.","criteria":"Scratch reads \"test\" exactly; zero bit errors over 100-write/read burst","measure":""},
+    {"ref":"D.12.1","header":"Ethernet link and ping","brief":"Connect Ethernet on 192.168.0.0/24; ping default IP; capture ARP.","criteria":"Link LED active; ARP succeeds with documented MAC; ICMP 0% loss over 100 packets","measure":""},
+    {"ref":"D.12.2","header":"Ethernet link recovery","brief":"Disconnect Ethernet mid-run, reconnect; verify recovery. v1.2.0 brings new PHY driver.","criteria":"Recovers ≤5 s; no reset; no Modbus alarm; no missed frames","measure":""},
+    {"ref":"D.12.3","header":"BACnet Who-Is sanity","brief":"Quick stack-init sanity via BAC0 Who-Is broadcast. Full BACnet coverage in Section F.","criteria":"I-Am received ≤5 s; device instance matches identity; no Modbus alarms/resets/poll impact","measure":""},
+    {"ref":"D.13.1","header":"Identity register read","brief":"Run pytest -k \"TestInputRegisters or TestHoldingRegisters\" against UUT (slave 19).","criteria":"TestInputRegisters PASS (4/4); TestHoldingRegisters PASS (2/2); fw ver and slave ID match","measure":""},
+    {"ref":"D.13.2","header":"Modbus slave-ID change","brief":"Run pytest -k \"TestSlaveIdChange\"; exercises the documented writing-key lockout gating slave-ID write.","criteria":"TestSlaveIdChange PASS (1/1); controller restored","measure":""},
+    {"ref":"D.13.3","header":"Internal temperature","brief":"Run pytest -k \"test_temperature_plausible\"; record reported temp.","criteria":"PASS; temp within ambient + margin","measure":""},
+    {"ref":"D.13.4","header":"Speed-mod register round-trip","brief":"Run pytest -k \"test_speed_mod_input_mode_write or test_speed_mod_percentage_write\". In-firmware analog of the misapplied-AO failure mode.","criteria":"All TestHoldingRegisterWriteReadBack PASS; originals restored","measure":""},
+    {"ref":"D.13.5","header":"Airflow setpoint round-trip","brief":"Run pytest -k \"test_constant_airflow_setpoint_write\"; HR 6 round-trip (500, 0, restore).","criteria":"Both setpoint round-trip tests PASS","measure":""},
+    {"ref":"D.14.1","header":"Full point-list read","brief":"Run pytest -k \"TestInputRegisters or TestDiscreteInputs or TestHoldingRegisters or TestCoils\". Reads all 19 IRs, 10 DIs, 7 HRs, 9 coils.","criteria":"All 4 classes PASS; zero exceptions on valid addresses","measure":""},
+    {"ref":"D.14.2","header":"OOB read and invalid-write alarm","brief":"Run pytest -k \"TestErrorCases or test_alarm_code_at_110_percent or test_alarm_clears_at_0_and_100\". OOB reads return exception; invalid writes raise ALARM_CODE 7.","criteria":"TestErrorCases PASS (3/3); alarm_code_at_110_percent PASS; alarm_clears PASS","measure":""},
+    {"ref":"D.14.3","header":"OOB write rejection","brief":"Run pytest -k \"TestOutOfBoundsValidation\". XFAIL on v1.2.0 per known_issues.cfg until write-side rejection ships.","criteria":"PASS (2/2) OR XFAIL per cfg; D.14.2 must still PASS","measure":""},
+    {"ref":"D.14.4","header":"Alarm priority order","brief":"Run pytest -k \"test_alarm_clears_at_0_and_100\"; cross-reference priority (Fatal=1 > Error=2 > Warning=7).","criteria":"Transitions match priority; zero code-7 hold over active 2 or 1","measure":""},
 
-    {"section": "stress", "subref": "1", "header": "Power-cycle sweep", "brief": "50 power cycles at nominal dwell. Capture boot and key telemetry each cycle.", "criteria": "All 50 boot clean; no fault accumulation; rails within [func.1.2]",   "measure": ""},
-    {"section": "stress", "subref": "2", "header": "24 h soak",         "brief": "24 h continuous operation under representative load. Log rails + ambient temp.", "criteria": "No drift; no resets; bounded temp; logs complete; zero unexpected faults", "measure": ""},
+    {"ref":"E.1.1","header":"MIB enumeration at configured N","brief":"Mount all MIBs per UUT BoM; command token-shift enumeration; capture tokens.","criteria":"Enumeration ≤ fw spec time; every slot returns token matching label; no phantom slots","measure":""},
+    {"ref":"E.1.2","header":"Token-shift negative","brief":"Force token-shift inactive on a single slot; re-attempt enumeration.","criteria":"Enumeration fails or that MIB reads absent; firmware does not assign position","measure":""},
+    {"ref":"E.2.1","header":"Fan-enable line drive","brief":"Command MIB fan-enable ON/OFF; DMM no-load and test load.","criteria":"ON ≥ MIB spec under load; OFF < LOW threshold both","measure":""},
+    {"ref":"E.2.2","header":"Fan-status fault detection","brief":"Inject open and short-to-ground on fan-status return; confirm MOTOR STATUS transitions.","criteria":"Open → fault; Short → fault with sub-code; Healthy → 0","measure":""},
+    {"ref":"E.3.1","header":"SPI clock sweep","brief":"Sweep SPI 100–640 kHz in 60 kHz steps; 1000-frame burst; capture eye.","criteria":"Zero bit errors each rate; clean eye at 640 kHz; setup/hold in spec","measure":""},
+    {"ref":"E.3.2","header":"SPI at marginal rail","brief":"Repeat E.3.1 with 3.3 V at low-end tolerance.","criteria":"Zero bit errors each rate at 3.3 V = 3.1 V","measure":""},
+    {"ref":"E.3.3","header":"SPI eye under sustained load","brief":"Continuous SPI traffic at production rate for 10 min with all configured MIBs polling; capture eye at center and bracket extremes.","criteria":"Clean eye at all 3 points; zero corrupted frames over 10 min","measure":""},
+    {"ref":"E.4.1","header":"MIB PT linearity","brief":"Apply 0.0–10.0 inWc in 2.5 steps to MIB PT port; read via mainboard.","criteria":"Within transducer spec; monotonic","measure":""},
+    {"ref":"E.4.2","header":"Dual-vendor PT cross-check","brief":"Repeat E.4.1 with each approved vendor in MIB BoM; compare vendor-to-vendor.","criteria":"Vendor agreement in cross-vendor tolerance every point; no vendor non-monotonic","measure":""},
+    {"ref":"E.5.1","header":"MIB current-sense (deferred)","brief":"Deferred — no programmable load on bench. Verify unloaded zero-current matches MCU telemetry; loaded shifts to MPF DVT.","criteria":"Unloaded zero current; no spurious fault; loaded marked deferred-to-system-DVT","measure":""},
 
-    {"section": "integration", "subref": "1", "header": "System-level cross-check", "brief": "Sub-tests under live load with companion subsystems connected.", "criteria": "Each sub-scenario produces expected behavior per the system test plan; no regressions vs prior release", "measure": ""}
+    {"ref":"F.1.1","header":"BAC0 Who-Is discovery","brief":"Start BAC0 instance on test PC; broadcast Who-Is; capture I-Am from UUT. Minimal connectivity sanity — applies to Rev 3 v1.2.0 (partial BACnet) and Rev 4+ (full BACnet).","criteria":"I-Am received ≤5 s with documented device instance, BACnet address, vendor ID; no Modbus impact during broadcast","measure":""},
+    {"ref":"F.1.2","header":"Identity object read","brief":"BAC0 reads device-name, vendor-identifier, model-name, firmware-revision, application-software-version. Rev 4+ only — XFAIL on Rev 3 v1.2.0 (object read not yet implemented).","criteria":"All 5 objects return values matching identity sources (Modbus IRs, silkscreen); Rev 3 v1.2.0 marked XFAIL per known_issues","measure":""},
+    {"ref":"F.2.1","header":"BAC0 read AI1 voltage and airflow","brief":"BAC0 reads AI:0 (AI1 hardwired 0–10 V) and AV:1 (MPF Total Airflow, CFM) at 1 Hz for 60 s; cross-reference Modbus QFAN_AI1 and IR 8 (QFAN_AIRFLOW). Rev 4+ only.","criteria":"AI:0 agrees with Modbus QFAN_AI1 within ±1%; AV:1 agrees with Modbus IR 8 within ±1% after unit conversion; zero exceptions; no Modbus poll impact","measure":""},
+    {"ref":"F.2.2","header":"BAC0 write MPF Speed Control","brief":"BAC0 writes AO:1 (MPF Speed Control, R/W) to 3 values in 0–10 V range with MI:0 (Control Source) = 2 (BACnet); verify Modbus mirror and physical UUT AO1 voltage. Rev 4+ only.","criteria":"All 3 writes confirmed; AO:1 readback within ±0.05 V; Modbus mirror within ±1%; UUT AO1 DMM within ±4% commanded","measure":""},
+    {"ref":"F.3.1","header":"BAC0 read binary objects","brief":"BAC0 reads BI:0 (K1A), BI:1 (K1B), BI:2 (Start/Stop), and BV objects (Run Status, Fan Motor n Blank-Off, Fan Motor n Fault, Fan Motor n Enabled). Cross-reference Modbus DIs and coils. Rev 4+ only.","criteria":"Every BI and BV matches corresponding Modbus DI/coil bit-for-bit; no spurious objects","measure":""},
+    {"ref":"F.3.2","header":"BAC0 read multistate objects","brief":"BAC0 reads MI:0 (Control Source), MO:0 (Fan Status), MV:0 (Motor Count), MV:1 (Motors Enabled), MV:2 (Power State). Rev 4+ only.","criteria":"Each multistate value matches firmware console; MV:2 reports Normal under nominal CN3","measure":""},
+    {"ref":"F.4.1","header":"BAC0 COV subscription","brief":"BAC0 subscribes to AI:0 with COV increment; force voltage change at AI1 input; verify COV notification. Rev 4+ only.","criteria":"COV notification received ≤5 s of change; reported value matches stimulus within ±1%; unsubscribe clean","measure":""},
+    {"ref":"F.5.1","header":"BAC0 BACnet + Modbus concurrent","brief":"Run BAC0 reads at 1 Hz concurrent with Modbus polling at 1 s for 30 min; both interfaces active. Rev 4+ only.","criteria":"Both interfaces serve continuously; zero exceptions/timeouts; rails within D.1.1; no alarms; UUT not reset","measure":""},
+    {"ref":"F.6.1","header":"YABE discovery + object enumeration","brief":"Launch YABE on test PC; perform Who-Is; click UUT device; expand object list. Cross-reference enumerated objects against published points list (Confluence).","criteria":"All published objects present (AI:0; AO:0, AO:1; AV:0, AV:1; BI:0–2; BO:0, BO:1; BV:0 plus motor blank-off/fault/enabled; MI:0; MO:0; MV:0–2); no unpublished objects; on Rev 3 v1.2.0 only device-identification visible","measure":""},
+    {"ref":"F.6.2","header":"YABE read AI1 voltage live","brief":"Apply 5.00 V to AI1 input. In YABE, read AI:0 present-value.","criteria":"AI:0 reads 5.00 V ±2%; cross-check Modbus QFAN_AI1; YABE refreshes within 1 s. Rev 4+ only.","measure":""},
+    {"ref":"F.6.3","header":"YABE switch Control Source to BACnet","brief":"In YABE, write MI:0 (Control Source) = 2 (BACnet). Confirm write succeeds.","criteria":"MI:0 readback = 2; firmware console confirms control source = BACnet; Modbus mirror updates. Rev 4+ only.","measure":""},
+    {"ref":"F.6.4","header":"YABE set MPF Speed Control","brief":"With Control Source = BACnet (per F.6.3), write AO:1 (MPF Speed Control) to 7.50 V via YABE. Measure UUT AO1 with DMM; observe AV:1 (MPF Total Airflow).","criteria":"AO:1 readback = 7.50 V ±0.05; UUT AO1 DMM = 7.50 V ±4%; AV:1 matches Modbus IR 8 within ±1%. Rev 4+ only.","measure":""},
+    {"ref":"F.6.5","header":"YABE Start/Stop override","brief":"With DI1 closed (Start), in YABE write BV:0 (Start/Stop) = FALSE. Observe Run Status and motor behavior. Restore BV:0 = TRUE.","criteria":"Motors stop on BV:0=FALSE; Run Status BV reflects; motors restart on BV:0=TRUE; matches BACnet override documentation. Rev 4+ only.","measure":""},
+    {"ref":"F.6.6","header":"YABE blank-off motor","brief":"In YABE, write Fan Motor 1 Blank-Off BV = TRUE. Observe MV:0 (Motor Count), MO:0 (Fan Status), Fan Motor 1 Fault BV, and alarm relay (BI:0/BI:1). Restore Blank-Off = FALSE.","criteria":"MV:0 decrements by 1; Fan Motor 1 Fault does NOT raise alarm (blank-off suppresses per documented behavior); BI:0/BI:1 do not transition; restore returns MV:0 and Fault state. Rev 4+ only.","measure":""},
+    {"ref":"F.6.7","header":"YABE alarm relay during fault","brief":"Trigger an alarm (disconnect a non-blanked motor). In YABE read BI:0 (K1A) and BI:1 (K1B); also MV:2 (Power State). Cross-check physical K1 contacts and Modbus alarm code.","criteria":"BI:0 (K1A) TRUE on fault (NC open); BI:1 (K1B) TRUE on fault (NO closed); MV:2 stays Normal unless brownout; physical K1 transitions; Modbus ALARM_CODE matches. Rev 4+ only.","measure":""},
+    {"ref":"F.6.8","header":"YABE PICS conformance spot-check","brief":"Reference PLC BACnet PICS PDF (Confluence). Spot-check 3 declared services via YABE: ReadPropertyMultiple, WritePropertyMultiple, COV-Notification. Confirm undeclared services return NotSupported.","criteria":"All 3 declared services respond per PICS; one undeclared service returns NotSupported. Rev 4+ only.","measure":""},
+
+    {"ref":"G.0.1","header":"Brownout setup","brief":"Instrument 3.3/5/12/24 V rails and MCU NRST on scope at nominal CN3.","criteria":"All 4 ch at steady nominal; reset de-asserted; scope triggers reliably on rail-collapse threshold","measure":""},
+    {"ref":"G.0.2","header":"Idle rail collapse timing","brief":"Idle controller; CN3 OFF; record times to 3.3 V@80%, 50%, MCU reset assert, all rails zero.","criteria":"All 4 times recorded; reset asserts before any rail < MCU brownout threshold","measure":""},
+    {"ref":"G.0.3","header":"Loaded rail collapse timing","brief":"Repeat G.0.2 with Modbus polling at 1 s production rate.","criteria":"Loaded times ≥ idle times by non-zero margin","measure":""},
+    {"ref":"G.0.4","header":"Max-N rail collapse (deferred load)","brief":"Repeat G.0.2 at max-supported N (9 MIBs), motors unloaded. Loaded portion deferred — no programmable load on bench.","criteria":"All 4 times recorded at max-N unloaded; reset still leads any rail below threshold; loaded cell marked DEFERRED","measure":""},
+    {"ref":"G.0.5","header":"Cold-start rise timing","brief":"CN3 ON from cold; capture rise; record CN3-ON to 3.3 V@90%, MCU reset de-assert, firmware banner.","criteria":"Three rise times; sequencing per firmware turn-on order; no overshoot; zero spurious console pre-banner","measure":""},
+    {"ref":"G.0.6","header":"Dwell derivation","brief":"Compute G.1–G.4 dwell from measurements (G.1=5×reset, G.2=1×zero, G.3=0.5×zero, G.4=0.1×zero). Re-derive on layout change.","criteria":"Four dwell values derived from real measurements before any sweep","measure":""},
+    {"ref":"G.1.1","header":"Long-dwell cold cycles","brief":"50 cycles at G.1 dwell (long, full collapse); ON dwell 60 s; verify banner, identity reads, atmospheric PT each cycle.","criteria":"All 50 boot clean; all 50 PT atmospheric; zero errors","measure":""},
+    {"ref":"G.2.1","header":"Full-collapse cycles","brief":"50 cycles at G.2 dwell (rails just reach zero); same per-cycle checks as G.1.1.","criteria":"All 50 boot clean; PT atmospheric; zero errors","measure":""},
+    {"ref":"G.3.1","header":"Half-dwell brownout window","brief":"50 cycles at G.3 dwell (half-discharge, brownout window where prior regression lived); scope 1-in-5.","criteria":"All 50 boot clean; PT atmospheric; captures show no out-of-spec rail/reset; no out-of-range PT in first 1 s","measure":""},
+    {"ref":"G.4.1","header":"Minimal-dwell worst case","brief":"50 cycles at G.4 dwell (10% discharge, rails mostly energized); scope every 5th. Any deviation triggers CAR and blocks release.","criteria":"All 50 boot clean; zero out-of-range PT in first 1 s; zero errors","measure":""},
+    {"ref":"G.5.1","header":"Modbus across cycles","brief":"Master polls at 1 s during 20 G.3-class cycles; verify clean disconnect/reconnect.","criteria":"Clean disconnect/reconnect each cycle; zero garbled frames ±2 s of transition; zero stale-data accepts; ALARM_CODE 7 not triggered","measure":""},
+    {"ref":"G.5.2","header":"Blackout detection","brief":"Run pytest -k \"TestBlackoutDetection\" alongside cycles. Expects ALARM_CODE 1 on >30% sag below 16.8 V. XFAIL on v1.2.0 until detector ships.","criteria":"PASS (4/4) with detector enabled OR XFAIL per cfg; XPASS treated as anomaly","measure":""},
+
+    {"ref":"H.1.1","header":"Soak runner start","brief":"Run run_modbus_tests.py with N spanning ≥24 h; instrument rails and ambient on DAQ at 1 sample/s.","criteria":"Runner reports estimated total runtime; DAQ writing; test record init with UUT ID, fw ver, suite SHA, cfg rev","measure":""},
+    {"ref":"H.1.2","header":"Master timeout config","brief":"Set Modbus master timeout to firmware-under-test value. v1.2.0 requires PLC 4.4.0-equivalent timeout, not legacy.","criteria":"Timeout per compat table, recorded on the data sheet; mismatch invalidates run","measure":""},
+    {"ref":"H.2.1","header":"24 h soak run","brief":"Soak runs uninterrupted to N or 24 h; do not interact; writes per-iter HTML/XML and summary.txt.","criteria":"Completes; summary.txt zero FAILs (XFAIL/XPASS allowed, each XPASS recorded); rails within D.1; bounded temp drift; zero trips","measure":""},
+    {"ref":"H.2.2","header":"Post-soak readback","brief":"Read CONTROLLER_INTERNAL_TEMPERATURE (IR 18), EEPROM scratch (\"test\" from D.11.1), reset counter.","criteria":"Temp within enclosure-warm bound; scratch reads \"test\"; reset counter unchanged or reconciled","measure":""},
+    {"ref":"H.3.1","header":"Aggregate timing analysis","brief":"Aggregate JUnit XML: PASS/XFAIL/XPASS/FAIL totals, per-test failure rate, max and 99th-pct wall time.","criteria":"Zero unexpected FAILs; XPASS reconciled vs cfg; per-test p99 in fw spec; per-iter pass rate ≥99.5%","measure":""},
+    {"ref":"H.3.2","header":"Soak artifact attachment","brief":"Attach summary.txt, first/last iteration HTML, any FAIL iter, rail/temp CSV.","criteria":"Artifacts attached; reviewer can recompute H.3.1","measure":""},
+
+    {"ref":"I.2.1","header":"QFAN_AIRFLOW cross-check","brief":"During MPF DVT §5.2 (AI1=10 V, 5 min); compare AIRFLOW_OUTPUT DMM, QFAN_AIRFLOW (IR 8), per-fan IR 9-17, anemometer.","criteria":"AIRFLOW_OUTPUT and QFAN_AIRFLOW agree within ±1%; per-fan sums to total within rounding; all agree with anemometer within ±10%","measure":""},
+    {"ref":"I.3.1","header":"Multi-motor fault aggregation","brief":"After MPF DVT §6.2 (motor #3 off), also disconnect motor #1; read all MOTOR STATUS, ALARM STATUS, ALARM CODE.","criteria":"1 and 3 fault; 2 and 4 healthy; ALARM STATUS=1; ALARM CODE=2; ACTIVE_MOTOR_QUANTITY reflects loss","measure":""},
+    {"ref":"I.4.1","header":"Premium Panel scenarios","brief":"Run Premium Panel scenarios #1, #2, #6, #13, #14 targeting documented failure modes. Requires PLC 4.4.0 per v1.2.0 release notes.","criteria":"Each scenario produces expected Fan Controller behavior per scenario pass criteria","measure":""},
+
+    {"ref":"J.2.1","header":"Multi-firmware Section D","brief":"For each (mainboard rev, firmware version) targeted for support, run Section D against representative unit.","criteria":"All targeted pairs pass Section D; failing pairs added to Block list in Section J back-compat matrix","measure":""},
+    {"ref":"J.2.2","header":"Downgrade-upgrade round-trip","brief":"Load previous-release firmware on UUT, run D + G.0; reload release candidate, re-run.","criteria":"Downgrade succeeds; D passes on prior; upgrade succeeds; D passes again; EEPROM preserved","measure":""},
+    {"ref":"J.3.1","header":"Suite diff vs prior release","brief":"Diff test_modbus_map.py commit between prior-release sign-off and release candidate. Each change = contract change.","criteria":"Diff captured; every test add/assertion change reconciled with user-manual and release notes; removed tests carry rationale","measure":""},
+    {"ref":"J.3.2","header":"Previous suite on new firmware","brief":"Run previous-release suite commit against release-candidate firmware.","criteria":"Previous suite passes in full OR each failure documented as intentional change with corresponding RC suite update","measure":""}
   ],
-
+  "sections": [
+    {"id":"C","code":"mech","name":"Mechanical / Pre-energize Checks","title":"Section C — Mechanical / Pre-energize Checks","intro":"Run de-energized before mounting in FCAT. Catches assembled-unit defects that destroy hardware, injure personnel, or invalidate downstream measurements at first power-up. Mainboard PCB and MIB boards already qualified per Section A and Section B external references."},
+    {"id":"D","code":"fcat","name":"Mainboard FCAT Tests","title":"Section D — Mainboard FCAT Tests","intro":"Exercise every documented interface on assembled controller with UUT in FCAT fixture, no MIBs attached. Tolerances trace to 1704165 Rev3 product specifications. Re-verifies at assembled-unit boundary what the Main Board DVT verified at bare-board boundary."},
+    {"id":"E","code":"mib","name":"MIB-Side Behavior","title":"Section E — MIB-Side Behavior","intro":"Exercise MIBs as installed in UUT (fixed N per BoM). [mib.3.3] sustained SPI eye replaces former multi-N integration coverage; loaded current-sense ([mib.5.1]) defers to MPF DVT until programmable load is on bench. PCB-level MIB qualification owned by external MIB DVT (Section B)."},
+    {"id":"F","code":"bacnet","name":"BACnet (BAC0 + YABE)","title":"Section F — BACnet (BAC0 + YABE)","intro":"Functional BACnet checks. [bacnet.1]–[bacnet.5] = automated via BAC0 (Python BACnet client, https://bac0.readthedocs.io/). [bacnet.6] = manual interactive via YABE (Yet Another BACnet Explorer). Object IDs reference our published BACnet points list — see <Confluence Link>. [bacnet.1.1] and [bacnet.6.1] Who-Is sanity applies to Rev 3 v1.2.0 partial BACnet; [bacnet.1.2]–[bacnet.5.1] and [bacnet.6.2]–[bacnet.6.8] are Rev 4+ which ships full BACnet stack. On Rev 3 v1.2.0, Rev 4+ rows are expected XFAIL per known_issues.cfg."},
+    {"id":"G","code":"pwrcycle","name":"Power-Cycle Robustness","title":"Section G — Power-Cycle Robustness","intro":"Empirical brownout characterization in [pwrcycle.0] feeds dwell parameters for [pwrcycle.1]–[pwrcycle.4]. MPF DVT does not exercise variable-length cycles — this section is the only place at any level that does."},
+    {"id":"H","code":"soak","name":"24 h Soak Under Modbus Polling","title":"Section H — 24 h Soak Under Modbus Polling","intro":"Regression guard for Modbus timing defects that only surface after sustained polling. Catches drift-class defects single-shot tests miss."},
+    {"id":"I","code":"integration","name":"Integration Cross-Checks","title":"Section I — Integration Cross-Checks","intro":"Cross-checks with MPF DVT under load. Run only after Section [mech]–[soak] pass on bench and MPF DVT §3–§5 pass on system."},
+    {"id":"J","code":"backcompat","name":"Backward-Compatibility","title":"Section J — Backward-Compatibility","intro":"Qualify UUT firmware-and-mainboard against population of MIB revisions and firmware versions in field."}
+  ],
   "knownIssues": [
-    {"defect": "Example: known firmware defect that masks XYZ behavior on Rev A units.", "jira": "TBD-NNNN",                "suite": "TestExample (xfail)",   "dvt": "[func.2.2]. XFAIL accepted; XPASS = fix landed."},
-    {"defect": "Example: interface contract change waiting on platform-side update.",   "jira": "Tracked outside Jira yet", "suite": "Soak runner timeout = new spec", "dvt": "[stress.2] timeout configuration; [integration.1] prerequisite."}
+    {"defect":"Blank-off coil ON does not suppress that fan's alarm; fan alarm reads True (inverted).","suite":"TestBlankOffPlates::test_blankoff_on_per_fan (xfail)","dvt":"D.14.1 (Coils + DI subset). XFAIL accepted; XPASS = fix landed."},
+    {"defect":"Blackout detection not yet shipped — detector function not yet implemented in firmware.","suite":"TestBlackoutDetection (xfail, 4 sub-tests)","dvt":"G.5.2. Pass accepts suite PASS or XFAIL-per-cfg."},
+    {"defect":"Write-side input validation incomplete for some HRs; OOB write rejection not yet shipped.","suite":"TestOutOfBoundsValidation (xfail)","dvt":"D.14.3. D.14.2 (ALARM_CODE=7 on invalid write) still PASSes."},
+    {"defect":"Fan Controller → PLC Modbus RTU needs higher response timeout; requires PLC 4.4.0.","suite":"Soak runner timeout configured to v1.2.0 spec.","dvt":"H.1.1 / H.1.2 timeout config; I.4 system-side prerequisite."},
+    {"defect":"BACnet on Rev 3 v1.2.0 is Who-Is/I-Am only — object read, COV, and full property access are Rev 4+ scope.","suite":"BAC0 rows F.1.2–F.5.1 marked XFAIL in known_issues.cfg on Rev 3","dvt":"Section F. Rev 4+ XPASS = full BACnet shipped."}
   ],
-
   "elaborations": [
-    {"ref": "[mech] intro",            "text": "Section [mech] runs de-energized to catch assembly defects that would destroy hardware or invalidate downstream electrical measurements. Mirrors the assembled-unit-level safety check from the sub-assembly DVT."},
-    {"ref": "[func.2.2] sustained polling", "text": "Continuous polling at production rate surfaces drift defects that single-read tests miss. Mark XFAIL in known-issues only when a defect is documented and not release-blocking."},
-    {"ref": "[stress.2] soak note",    "text": "24 h soak is the regression guard for any timing or buffer-management defect that only surfaces under sustained activity. Attach the runner's summary, first/last iteration logs, and rail traces to the data sheet."},
-    {"ref": "Release-gate caveat",     "text": "Appendix B is a starting point. Refine the change-severity categories and the compatibility matrix with Manufacturing Engineering, Quality, and the system-DVT owner before treating it as authoritative."}
+    {"ref":"Section A — Main Board DVT (external)","text":"PCB-level qualification of the bare mainboard (HiPot, ICT, AOI, electrical functional at the board boundary) is owned by the external Main Board DVT and not repeated here. Section A of this document is a reference to that artifact and a placeholder for sign-off attestation that the mainboard SN used in this assembly has a signed Main Board DVT on record."},
+    {"ref":"Section B — MIB DVT (external)","text":"PCB-level qualification of each MIB board is owned by the external MIB DVT. Section B is a reference and attestation page: for every MIB position in the assembly, a signed MIB DVT must be attached. Section E (MIB-Side Behavior) exercises MIBs as installed in the FCAT fixture; it does not duplicate bare-board coverage owned by Section B."},
+    {"ref":"C intro","text":"Section C runs de-energized before mounting in FCAT. Catches assembled-unit defects that destroy hardware, injure personnel, or invalidate downstream measurements at first power-up. Mirrors MPF DVT §3 pattern at Fan-Controller assembled-unit level."},
+    {"ref":"D.13/D.14 conventions","text":"D.13 and D.14 run from the automated suite at C:\\firmware\\tools\\. Default Modbus slave ID is 17 (field) and 19 (FCAT). Writing-key lockout for slave-ID writes is documented in the firmware; the suite uses the documented value — do not improvise."},
+    {"ref":"D.14.3 v1.2.0 note","text":"On v1.2.0 this test is XFAIL via known_issues.cfg until write-side input validation is added. D.14.2 (ALARM_CODE=7 on invalid write) still PASSes because the alarm-raising path is separate from write acceptance. If D.14.2 also fails, regression is beyond the known issue and blocks release."},
+    {"ref":"E.3.3 SPI eye under load","text":"Replaces the multi-N MIB array SPI eye test from earlier doc revisions. Each Fan Controller assembly ships with a fixed MIB count per BoM, so we exercise SPI eye at that fixed N for production-rate-equivalent traffic rather than sweeping array sizes. Brownout characterization (G.0.4) still runs at max-supported N (9) because that's the worst case for bulk-cap discharge regardless of any single unit's configuration."},
+    {"ref":"E.5.1 deferred","text":"Programmable electronic load is wish-list capital item (not on Q-PAC bench). Until acquired, loaded current-sense and max-power verification defers to system-level MPF DVT motor-side equivalent with motors connected. Bench-side reduced to unloaded sanity check."},
+    {"ref":"Section F BACnet points list","text":"Authoritative object enumeration, IDs, descriptions, ranges, and Read/Write attributes: <Confluence Link>. UUT BACnet profile is B/AAC (Advanced Application Controller), server-only (no client), supporting COV, Notification, Schedule, BBMD, segmentation, time sync, ReadPropertyMultiple, WritePropertyMultiple. Update F.x.x criteria whenever the points list adds, removes, or re-IDs an object."},
+    {"ref":"Section F (BAC0 vs YABE) scope","text":"BAC0 (https://bac0.readthedocs.io/) drives automated F.1–F.5: scripted reads/writes, COV subscription, concurrent-with-Modbus stress. YABE (Yet Another BACnet Explorer, Windows GUI) drives manual F.6: object-tree browsing, point-by-point interactive write/read, PICS spot-check. Manual coverage catches what scripts miss — unexpected objects, error-response shapes, UI-level conformance. On Rev 3 v1.2.0 only F.1.1 and F.6.1 (Who-Is) are implemented; F.1.2 through F.6.8 are intentionally listed to track Rev 4+ feature shipping. Mark XFAIL via known_issues.cfg on Rev 3 runs; XPASS on Rev 3 means firmware shipped a Rev 4 feature early — anomaly worth flagging."},
+    {"ref":"Section F test PC setup","text":"BAC0 install: pip install BAC0. YABE install: download from current GitHub fork (was codeplex.com). Test PC needs network route to UUT BACnet IP address (default 192.168.0.0/24 per D.12.1) and BACnet port 0xBAC0 (47808). For first run of each firmware build, capture pcap with Wireshark + bacnet dissector; attach to data sheet. UUT BACnet device instance and BACnet address recorded on cover."},
+    {"ref":"Section F.6 YABE workflow","text":"YABE F.6 rows are sequential and depend on each other: F.6.1 (discovery) before F.6.2; F.6.3 (Control Source → BACnet) before F.6.4 (MPF Speed Control write — otherwise the write is masked by AI1 hardwired source). Restore Control Source = 0 (AI1 default) at end of Section F.6 unless next test in Section F or G specifies otherwise."},
+    {"ref":"G intro","text":"Section G is the power-cycle-robustness coverage. Cold-start bus-buffer / PT regression on Rev2 passed individual desk testing because the test setup did not exercise variable-length power cycles under realistic rail-collapse. G.0 outputs feed dwell parameters for G.1–G.4. MPF DVT does not exercise variable-length cycles — G is only place at any level."},
+    {"ref":"G.0.4 deferred","text":"Loaded N=9 brownout remains open gap until programmable load is on bench or covered at system level under MPF DVT D-equivalent. Data sheet cell marked DEFERRED — pgm load N/A."},
+    {"ref":"G.5.2 known-issue","text":"On v1.2.0, blackout detection is not yet shipped — the detector is not yet implemented in firmware. TestBlackoutDetection xfail until it lands."},
+    {"ref":"H.1.2 known-issue","text":"Per v1.2.0 release notes, Fan Controller → PLC Modbus RTU requires higher response timeout than legacy firmware; PLC 4.4.0 supports new timeout. Legacy timeout produces master-side false-positives."},
+    {"ref":"I.4.1 PLC dependency","text":"Per v1.2.0 release notes, Section I requires PLC firmware 4.4.0 on system side. Running against pre-4.4.0 PLC with v1.2.0 Fan Controller firmware produces Modbus timeout false-positives."},
+    {"ref":"Back-compat matrix","text":"Mainboard Rev 2 has a known bus-buffer cold-start defect; Section G required on every release. Mainboard Rev 1 out of warranty support; supports at most 4 MIBs with MIB Rev 2."},
+    {"ref":"Release-gate caveat","text":"Appendix B is straw-man. Categories are starting point; Engineering to refine with Manufacturing Engineering, Quality, System DVT owner before treated as authoritative. Cell entries conservative — when in doubt, table requires section."},
+    {"ref":"HIL trajectory","text":"Once HIL is tooled, severity 1 collapses to automated suite green on HIL plus short physical-sanity pass (D.2, D.3) when patch goes to production-released artifact rather than only engineering builds."},
+    {"ref":"Production test split","text":"Production-line testing covered by FCMT2 Python at in-house Q-PAC bench with DHR logging (per spec ID 2026-02). PCB production test offloaded to the electronics CM under per-board fee. DVT consumes some of the same fixtures but acceptance criteria are intentionally tighter and additive."},
+    {"ref":"Suite vs production","text":"test_modbus_map.py (engineering/DVT) and FCMT2 (manufacturing production test) are distinct artifacts at different lifecycle stages. DVT runs on engineering builds and release candidates; FCMT2 runs on every production unit."},
+    {"ref":"Known-issues mechanism","text":"Suite supports known_issues.cfg — xfail when firmware bug is known and not release-blocking. XPASS (unexpected pass) surfaced in run report. Every DVT records known_issues.cfg version and reconciles every XPASS against open-defect tracker."}
   ],
-
   "equipment": [
-    {"name": "Programmable DC supply",          "action": "UUT supply for nominal and sweep ([func.1.3])",        "spec": "Programmable rise/fall, current-limited, traceable"},
-    {"name": "4½-digit DMM",                    "action": "Rail voltage, idle current ([func.1.2])",             "spec": "Calibrated, traceable"},
-    {"name": "Comms test PC + transport",       "action": "Identity, point-list, soak ([func.2], [stress.2])",   "spec": "Per primary comm-interface spec"},
-    {"name": "Insulation tester (Megger)",      "action": "Pre-energize check ([mech.3])",                       "spec": "500 VDC, traceable"},
-    {"name": "Power-cycle automation relay",    "action": "Cycle sweep ([stress.1])",                            "spec": "≥1 kHz switching margin; programmable dwell"},
-    {"name": "DAQ for soak instrumentation",    "action": "Rail and ambient logging ([stress.2])",               "spec": "≥1 sample/s; non-volatile capture"},
-    {"name": "Inspection light + 10× loupe",    "action": "Visual inspection ([mech.1])",                        "spec": "Bright LED + 10× optical"}
+    {"name":"FCAT bench duplicate (R&D)","action":"Primary fixture for Sections D, E, G","spec":"NI LabVIEW + SCPI; pressure generator; fixture for mainboard + MIB slots"},
+    {"name":"Programmable 24 VAC/VDC supply (CN3)","action":"Energize controller; brownout sweeps","spec":"Programmable rise/fall, 1 A min"},
+    {"name":"Programmable electronic load (deferred — not on Q-PAC bench)","action":"Wish-list. Would enable E.5.1 loaded current-sense and G.0.4 loaded max-N brownout at Fan-Controller bench. Until acquired, defers to MPF DVT.","spec":"0–5 A, programmable steps (target when acquired)"},
+    {"name":"Calibrated 0–10 V source","action":"AI1 linearity sweep","spec":"±0.5% accuracy, programmable"},
+    {"name":"Calibrated pressure generator","action":"PT linearity sweeps (D.9, E.4)","spec":"0–10 inWc, ±0.25% FS"},
+    {"name":"Pressure transducer (multi-vendor)","action":"Multi-vendor PT MIB cross-check (E.4)","spec":"Same range as UUT; ±0.25% FS"},
+    {"name":"Megger insulation tester","action":"Pre-energize check (C.7)","spec":"500 VDC, traceable"},
+    {"name":"Calibrated torque wrench","action":"Bus bar and lug torque verification (C.2)","spec":"Range covers bus bar and lug spec; calibrated"},
+    {"name":"Pressure leak test apparatus","action":"PT tube integrity (C.5)","spec":"Bubble or hold-pressure capable"},
+    {"name":"Inspection light / 10x loupe","action":"Visual inspection of enclosure, harness, conductor insulation, fittings (C.1, C.6). PCB solder-joint AOI offloaded to CM and covered by external Main Board DVT (Section A) and MIB DVT (Section B) — not repeated at this bench.","spec":"Bright LED + 10x optical"},
+    {"name":"4-channel scope, ≥100 MHz","action":"Power-cycle and SPI capture (G, E.3)","spec":"Logic and analog modes"},
+    {"name":"Power-cycle automation relay (SSR or DAQ-driven)","action":"50-cycle dwell sweeps in Section G","spec":"≥1 kHz switching margin; programmable dwell"},
+    {"name":"Modbus RTU master (PC + USB-to-RS485)","action":"Modbus identity, point-list, soak","spec":"Common ground required if separate supplies"},
+    {"name":"USB-to-RS485 adapter","action":"PC ↔ UUT transport","spec":"FTDI or CH340; COM noted on cover"},
+    {"name":"BAC0 (Python BACnet client)","action":"Section F.1–F.5 automated BACnet coverage; D.12.3 Who-Is sanity","spec":"BAC0 — https://bac0.readthedocs.io/; pip install BAC0; Python 3.8+. Points list: see Section F intro reference."},
+    {"name":"YABE (Yet Another BACnet Explorer)","action":"Section F.6 manual interactive BACnet coverage (object enumeration, MPF Speed Control write, Start/Stop override, blank-off, alarm-relay observation, PICS spot-check)","spec":"Windows GUI; current GitHub fork (originally codeplex.com); Wireshark + BACnet dissector for first-run pcap"},
+    {"name":"3-axis test stand","action":"Accelerometer tilt cross-check (D.10.2)","spec":"90° X and Y orientations"}
   ],
-
   "releaseGate": {
     "categories": [
-      {"id": "1", "name": "Firmware patch (no hardware change)",                "required": "Automated suite + [func] sanity"},
-      {"id": "2", "name": "Firmware feature with interface contract change",    "required": "Automated suite + full [func] + diff against prior release"},
-      {"id": "3", "name": "Hardware change at sub-assembly level",              "required": "External Sub-Assembly DVT (Section A) re-signed + full Section [func] + [stress] + [integration]"},
-      {"id": "4", "name": "Mechanical / harness / enclosure change",            "required": "Full Section [mech] + [stress]"},
-      {"id": "5", "name": "Combined hardware + firmware release",               "required": "External Sub-Assembly DVT (Section A) re-signed + full DVT (B through E) + system-DVT regression"}
+      {"id":"1","name":"Firmware patch (no hardware, no Modbus contract change)","required":"Automated suite green on bench; D.2, D.3 sanity"},
+      {"id":"2","name":"Firmware feature with Modbus contract change","required":"Automated suite + D.13, D.14, J.3 diff; user-manual reconciliation"},
+      {"id":"3","name":"Firmware with power-management or alarm logic change","required":"Suite + D.13, D.14, G in full"},
+      {"id":"4","name":"PT, accelerometer, sensor-path firmware change","required":"Suite + D.9, D.10, E.4"},
+      {"id":"5","name":"MIB-side firmware change","required":"Suite + E + soak H"},
+      {"id":"6","name":"Mainboard hardware change (Rev3 → Rev4 or equivalent)","required":"External Main Board DVT (Section A) re-signed + full Section D + F + G + H + J"},
+      {"id":"7","name":"MIB hardware change","required":"External MIB DVT (Section B) re-signed + Full Section E + soak H"},
+      {"id":"8","name":"Bus bar, fusing, mechanical, harness, enclosure change","required":"Full Section C + soak H"},
+      {"id":"9","name":"System-level change touching Premium Panel scenarios","required":"Suite + I.4 + MPF DVT regression"},
+      {"id":"10","name":"BACnet stack or object-list change","required":"Suite + Section F (BAC0 F.1–F.5 + YABE F.6) in full + identity reconciliation against published points list"},
+      {"id":"11","name":"Combined hardware + firmware release","required":"External Main Board DVT (Section A) + External MIB DVT (Section B) + Full DVT (C through J) + MPF DVT"}
     ],
     "matrix": [
-      {"cells": ["Rev A",         "Current",      "Initial release target."]},
-      {"cells": ["Rev B (next)",  "TBD",          "Next-generation variant. Add row when board enters DVT."]}
+      {"cells": ["Rev 1", "Pass (legacy)", "Pass (limited)", "N/A", "Rev 1 out of warranty support. Supports at most 4 MIBs with MIB Rev 2."]},
+      {"cells": ["Rev 2", "Pass (limited)", "Pass", "Pass (limited)", "Known bus-buffer cold-start defect; Section G required on every release. Current fw: v1.2.0; PLC 4.4.0 required; tracked-internally known issues per Known-Issues table. Section F (BACnet) limited to F.1.1 Who-Is."]},
+      {"cells": ["Rev 3 (UUT)", "Pass (limited)", "Pass", "Pass", "Current release target. Sections A and B (external) + full Section C–J required. Section F BACnet limited to F.1.1 on v1.2.0; F.1.2–F.5.1 XFAIL until Rev 4."]},
+      {"cells": ["Rev 4 (next)", "TBD", "TBD", "TBD", "Next-generation board, ships full BACnet stack. Section F F.1.2–F.5.1 become required (no XFAIL). Add row when board enters DVT."]}
     ]
   }
 }
