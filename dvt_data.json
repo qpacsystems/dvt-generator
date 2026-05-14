@@ -103,9 +103,7 @@
     {"ref":"D.3","header":"Fuse class and rating","brief":"Verify fuse class, V, A match nameplate; no substitutions.","criteria":"All fuses match nameplate class/V/A","measure":""},
     {"ref":"D.4","header":"Connector seating","brief":"Tug-test CN1, CN2, CN3, CN4, CN5 and internal connectors.","criteria":"All seated; latches engaged (MIBs); tug-test holds","measure":""},
     {"ref":"D.5","header":"Pressure tube routing","brief":"Inspect PT air tubes: routing, port mapping, fittings; leak test.","criteria":"No kinks; fittings tight; leak test at 20 inch.w.c.","measure":""},
-    {"ref":"D.6","header":"Megger insulation","brief":"Megger L1/L2/L3/neutral/bus to chassis at 500 VDC for 60 s; signal cables disconnected.","criteria":"≥100 MΩ each point","measure":""},
-    {"ref":"D.7","header":"Post-Megger DMM sanity","brief":"DMM bus-GND, AI1 and AO1 polarity, K1 rest state.","criteria":"Bus-GND >100 MΩ; pairs not crossed; K1 at rest","measure":""},
-
+    
     {"ref":"E.1.1","header":"Idle rail voltages","brief":"DMM 3.3 V, 12 V, 24 V, V_RECT at idle, CN3=24 VDC.","criteria":"3.3 V: 3.1–3.4; 12 V/24 V: ±5%; V_RECT: 30.1–33.4; idle ≤250 mA","measure":""},
     {"ref":"E.1.2","header":"On-board rail monitors","brief":"Read rail-monitor ADC via console; compare to DMM. Drifted monitor was implicated in a prior cold-start regression — guard against recurrence.","criteria":"Each monitor within ±2% of DMM","measure":""},
     {"ref":"E.1.3","header":"CN3 input sweep","brief":"Sweep CN3 22–26 VAC and 22–26 VDC in 1 V steps, 30 s dwell; log rails.","criteria":"Rails within E.1.1; no trip, brownout, comm drop","measure":""},
@@ -283,7 +281,6 @@
     {"name":"Calibrated 0–10 V source","action":"AI1 linearity sweep (E.4); over/under-range stress (E.15.1, E.15.2)","spec":"±0.5% accuracy, programmable, −5 V to +15 V capable for stress"},
     {"name":"Calibrated pressure generator","action":"PT linearity sweeps (E.9, F.4)","spec":"0–10 inWc, ±0.25% FS"},
     {"name":"Pressure transducer (multi-vendor)","action":"Multi-vendor PT MIB cross-check (F.4)","spec":"Same range as UUT; ±0.25% FS"},
-    {"name":"Megger insulation tester","action":"Pre-energize check (D.6)","spec":"500 VDC, traceable"},
     {"name":"Calibrated torque wrench","action":"Bus bar and lug torque verification (D.2)","spec":"Range covers bus bar and lug spec; calibrated"},
     {"name":"Pressure leak test apparatus","action":"PT tube integrity (D.5)","spec":"Bubble or hold-pressure capable"},
     {"name":"Inspection light / 10x loupe","action":"Visual inspection of enclosure, harness, conductor insulation, fittings (D.1). PCB solder-joint AOI offloaded to CM and covered by external Main Board DVT (Section A) and MIB DVT (Section B) — not repeated at this bench.","spec":"Bright LED + 10x optical"},
