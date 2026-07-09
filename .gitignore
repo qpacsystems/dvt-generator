@@ -160,3 +160,15 @@ Thumbs.db
 
 claude.md
 .claude
+
+# --- Q-PAC internal report content — keep OUT of the public repo ---
+# Product-specific execution-report data (internal serials, MACs, names, links)
+dvt_data_fc_exec_report.json
+dvt_data_fc_v130rc3.json
+# Internal evidence figures embedded in reports
+figs/
+
+# scratch / test leftovers
+_imgtest.json
+_imgtest.docx
+_test_fig.png

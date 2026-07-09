@@ -261,3 +261,35 @@ The post-process is needed because docx-js v9 doesn't have a direct API for cont
 ## License
 
 MIT — see [LICENSE](LICENSE). Copyright © 2026 Kane Anderson.
+
+## Report mode (execution reports)
+
+The generator has an opt-in **report mode** for producing DVT *execution reports* (results, verdicts, evidence) as opposed to the blank test *procedure*. Set `"mode": "report"` in `meta` and provide an ordered `reportSections` array instead of `sections`/`steps`. Sections render top-to-bottom in the order listed, each starting on a new page with a clickable Contents entry.
+
+Try it:
+
+```bash
+node build_dvt.js dvt_data_report_example.json
+```
+
+`dvt_data_report_example.json` is a complete, self-contained sample that exercises every block kind; copy it and edit.
+
+### `reportSections` block kinds
+
+Every block has a `name` (its heading) and an optional `intro` (italic lead paragraph). The `kind` field selects the renderer:
+
+| `kind` | Renders | Key fields |
+| --- | --- | --- |
+| `narrative` | Heading + one paragraph per string | `body: [string]` |
+| `subcomponents` | Referenced documents, each with a title, link line, and note | `refs: [{title, link, passCriteria}]` |
+| `scope` | Optional trigger-legend table + a required-activities matrix | `legendTitle`, `legend: [{id, name, fired}]`, `matrixTitle`, `headers: [string]`, `rows: [[cells]]`, optional `columnWidths` |
+| `units` | A free-form table | `columns: [string]`, `rows: [[cells]]`, optional `columnWidths` |
+| `tests` | Ref / Header / Brief / Criteria / Result table (no P/F checkbox) | `steps: [{ref, header, brief, criteria, measure}]` — put the verdict in `measure` |
+| `anomalies` | Anomalies table + deviations + recommendations list + conclusion | `anomalies: [{id, activity, finding, disposition}]`, `deviations`, `recommendationsTitle`, `recommendations: [string]`, `conclusionTitle`, `conclusion: [string]` |
+| `figures` | Embedded images, auto-scaled, with captions | `figures: [{file, caption, heading?}]` — `file` is relative to the data file; PNG/JPEG supported |
+
+Notes:
+- `meta.coverRows`, `headerLine`, `outputFilename`, revision/date interpolation, and the field-refresh behavior work exactly as in the default mode.
+- Report mode has **no P/F content-control checkboxes** — it is a report, not a checklist.
+- Images embed at their stored resolution; downscale large photos first to keep the `.docx` small.
+- Backward compatible: without `"mode": "report"`, rendering is unchanged.

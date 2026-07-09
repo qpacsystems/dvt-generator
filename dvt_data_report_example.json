@@ -1,0 +1,110 @@
+{
+  "_comment": "Example DVT Execution Report (report mode). Demonstrates every reportSections block kind. Copy this and edit. Build with: node build_dvt.js dvt_data_report_example.json",
+
+  "meta": {
+    "mode": "report",
+    "revision": "1.0",
+    "draftStatus": "For Review",
+    "title": "DESIGN VERIFICATION TEST — EXECUTION REPORT",
+    "productName": "Example Product",
+    "subtitle": "Example subtitle — what this unit is and what changed",
+    "descriptor": "Change-triggered DVT execution report — example.",
+    "headerLine": "{productName} DVT Execution Report — Rev {revision} ({draftStatus})",
+    "outputFilename": "Example_DVT_Execution_Report.docx",
+    "creator": "Engineering",
+    "coverRows": [
+      {"label": "Document Type", "value": "Design Verification Test (DVT) — Execution Report"},
+      {"label": "Unit Under Test", "value": "<Product, key configuration, firmware/version>"},
+      {"label": "Result summary", "value": "<e.g., 7 PASS; 2 pass by reference; 2 non-blocking; 1 pending>"},
+      {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
+      {"label": "Date", "value": "________________________"},
+      {"label": "Tester", "value": "<name(s)>"},
+      {"label": "Reviewer / Approver", "value": "<name / role>"},
+      {"label": "Owner (Engineering)", "value": "<department>"}
+    ]
+  },
+
+  "reportSections": [
+    {
+      "kind": "narrative",
+      "name": "1. Summary",
+      "body": [
+        "A 'narrative' block renders a heading, an optional italic intro, and one paragraph per string in 'body'.",
+        "Use it for the executive summary, background, or any prose section."
+      ]
+    },
+    {
+      "kind": "subcomponents",
+      "name": "2. Sub-component DVTs",
+      "intro": "A 'subcomponents' block lists referenced documents. Each ref renders a bold title, a 'Reference:' link line, and an optional passCriteria note.",
+      "refs": [
+        {"title": "Example Sub-assembly DVT", "link": "https://example.confluence/página", "passCriteria": "Latest released sub-assembly DVT on record. Sign-off recorded in that document."}
+      ]
+    },
+    {
+      "kind": "scope",
+      "name": "3. Scope: Required Tests & Rationale",
+      "intro": "A 'scope' block renders an optional trigger legend table and a required-activities matrix.",
+      "legendTitle": "Change-trigger legend",
+      "legend": [
+        {"id": "FW", "name": "Firmware change", "fired": "FIRED"},
+        {"id": "HW", "name": "Hardware change", "fired": ""}
+      ],
+      "matrixTitle": "Required activities and verdicts",
+      "headers": ["Activity", "Verifies", "Method", "Trigger(s)", "Verdict"],
+      "columnWidths": [1800, 3000, 1300, 1300, 2824],
+      "rows": [
+        ["ACT-1", "REQ-1, REQ-2", "Test", "FW", "PASS"],
+        ["ACT-2", "REQ-3", "Analysis", "FW", "PENDING"]
+      ]
+    },
+    {
+      "kind": "units",
+      "name": "4. Units Under Test",
+      "intro": "A 'units' block renders a free-form table from 'columns' + 'rows'.",
+      "columns": ["Attribute", "Unit A", "Unit B"],
+      "columnWidths": [3424, 3400, 3400],
+      "rows": [
+        ["Serial", "<sn-a>", "<sn-b>"],
+        ["Configuration", "<cfg-a>", "<cfg-b>"],
+        ["Firmware", "<ver>", "<ver>"]
+      ]
+    },
+    {
+      "kind": "tests",
+      "name": "5. Test Results",
+      "intro": "A 'tests' block renders a Ref / Header / Brief / Criteria / Result table (no P/F checkbox — this is a report). Put the verdict in 'measure'.",
+      "steps": [
+        {"ref": "ACT-1", "header": "Example functional test", "brief": "Imperative one-line description of what was done.", "criteria": "Terse pass criteria.", "measure": "PASS — measured value / evidence reference."},
+        {"ref": "ACT-2", "header": "Example analysis", "brief": "Closed by reference to an external certification.", "criteria": "Covered by valid certification.", "measure": "PENDING — awaiting document."}
+      ]
+    },
+    {
+      "kind": "anomalies",
+      "name": "6. Anomalies, Recommendations & Conclusion",
+      "intro": "An 'anomalies' block renders an anomalies table, a deviations paragraph, a recommendations list, and a conclusion.",
+      "anomalies": [
+        {"id": "AN-1", "activity": "ACT-2", "finding": "Example finding.", "disposition": "Non-blocking; tracked to R2."}
+      ],
+      "deviations": "Deviations: D1 example deviation and its justification.",
+      "recommendationsTitle": "Recommendations",
+      "recommendations": [
+        "R1 — Example recommendation.",
+        "R2 — Another recommendation."
+      ],
+      "conclusionTitle": "Conclusion & Recommendation",
+      "conclusion": [
+        "Overall verdict tally and the readiness recommendation go here.",
+        "Approvals — Author: <name>. Reviewer / Approver: <name / role>."
+      ]
+    },
+    {
+      "kind": "figures",
+      "name": "Appendix A — Example Evidence",
+      "intro": "A 'figures' block embeds images (auto-scaled) with numbered captions. Paths are relative to this data file.",
+      "figures": [
+        {"file": "example_figure.png", "caption": "Fig. 1 — example figure with an explanatory caption."}
+      ]
+    }
+  ]
+}
