@@ -57,9 +57,5 @@
 
   "constraints": [
     "<Limits not to exceed, safety notes, things the lab should NOT do, data you need back (raw files, photos)>"
-  ],
-
-  "lab": {
-    "blankRows": 6
-  }
+  ]
 }

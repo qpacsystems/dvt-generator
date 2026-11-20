@@ -27,26 +27,19 @@ node build_test_request.js                              # builds test_request_da
 node build_test_request.js my_request.json              # start from test_request_template.json
 ```
 
-**Part 1 — Request** (filled in from the JSON by the requester)
+The document contains (all filled in from the JSON):
 
 | Section | JSON key | Contents |
 | --- | --- | --- |
 | Cover | `meta.coverRows` | Request ID, revision, requester, project, priority, need-by date |
-| 1.1 Device Under Test | `deviceUnderTest` | `[{label, value}]` — part number, rev, quantity/SNs, config, handling |
-| 1.2 Purpose | `purpose.background`, `purpose.objectives` | Why we're testing; the questions we hope to answer (numbered Q1, Q2, …) |
-| 1.3 Test Approach | `approach` | Broad strokes — how you're thinking about it |
-| 1.4 Envisioned Tests | `envisionedTests` | `[{id, name, learn, pass, fail}]` — high-level tests (R1, R2, …) with what pass / fail looks like |
-| 1.5 Overall Pass / Fail | `successCriteria` | `{pass, fail, inconclusive}` for the request as a whole |
-| 1.6 Constraints | `constraints` | Bullets: limits, safety, do-nots, data you need back |
+| 1 Device Under Test | `deviceUnderTest` | `[{label, value}]` — part number, rev, quantity/SNs, config, handling |
+| 2 Purpose | `purpose.background`, `purpose.objectives` | Why we're testing; the questions we hope to answer (numbered Q1, Q2, …) |
+| 3 Test Approach | `approach` | Broad strokes — how you're thinking about it |
+| 4 Envisioned Tests | `envisionedTests` | `[{id, name, learn, pass, fail}]` — high-level tests (R1, R2, …) with what pass / fail looks like |
+| 5 Overall Pass / Fail | `successCriteria` | `{pass, fail, inconclusive}` for the request as a whole |
+| 6 Constraints | `constraints` | Bullets: limits, safety, do-nots, data you need back |
 
-**Part 2 — Lab Execution** (left blank for the lab)
-
-- 2.1 Intake — received by/date, SNs, condition, assigned tech, planned dates (override labels with `lab.intakeRows`)
-- 2.2 Test Plan & Log — one row per specific test: Ref, linked request item (pre-filled R1…Rn), method/setup, dates, results & notes, Pass/Fail checkboxes. Plus `lab.blankRows` (default 6) extra rows for tests the lab adds.
-- 2.3 Findings vs. Objectives — each Q from 1.2 with a space for the answer
-- 2.4 Observations, Anomalies & Deviations — free-form box
-- 2.5 Overall Result — Pass / Fail / Inconclusive checkboxes + summary
-- 2.6 Sign-off — lab technician, lab lead, requester (override with `lab.signers`)
+The lab plans and records the detailed testing in its own format.
 
 Text fields accept a string (`\n` splits paragraphs) or an array of strings. `{key}` interpolation from `meta` works as in the DVT. Lint warns about leftover `<template text>`, missing objectives, and tests without pass/fail descriptions.
 

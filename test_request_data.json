@@ -76,9 +76,5 @@
     "Do not open the enclosure or remove epoxy.",
     "Do not exceed the rated maximum ambient temperature.",
     "Please send back raw temperature logs and photos of probe placement."
-  ],
-
-  "lab": {
-    "blankRows": 4
-  }
+  ]
 }

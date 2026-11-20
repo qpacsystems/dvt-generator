@@ -4,13 +4,10 @@
 //   node build_test_request.js [request.json]
 //   default: request.json = ./test_request_data.json
 //
-// The document has two parts:
-//   Part 1 — Request (filled by the requester, from the JSON): the device under
-//            test, why we're testing, what we hope to learn, the broad test
-//            approach, envisioned tests, and what pass / fail looks like.
-//   Part 2 — Lab Execution (left blank for the lab to fill in by hand / in
-//            Word): intake, specific tests performed, dates, notes, P/F,
-//            findings against each objective, overall result, sign-off.
+// The request covers the "why" and "what", not the "how": the device under
+// test, why we're testing, what we hope to learn, the broad test approach,
+// envisioned tests, and what pass / fail looks like. The lab plans and
+// records the detailed testing in its own format.
 //
 // Any string can use {key} to pull a string/number from `meta`.
 // Any text field may be a string (split on \n into paragraphs) or an array of
@@ -18,11 +15,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const JSZip = require('jszip');
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
-  Header, Footer, AlignmentType, PageOrientation, HeightRule,
-  HeadingLevel, BorderStyle, WidthType, ShadingType, PageBreak, PageNumber,
+  Header, Footer, AlignmentType, PageOrientation,
+  HeadingLevel, BorderStyle, WidthType, ShadingType, PageNumber,
 } = require('docx');
 
 // ============ CLI / load ============
@@ -105,9 +101,7 @@ const cellMargins = { top: 60, bottom: 60, left: 100, right: 100 };
 const HEADER_FILL = 'D9E2F3';
 const ALT_FILL = 'F5F7FB';
 const LABEL_FILL = 'F2F2F2';
-const PART_FILL = '1F3864';
-const LAB_HINT = '808080';
-const BOX = '☐'; // every ☐ run becomes a clickable Word checkbox in post-processing
+const NOTE_COLOR = '808080';
 
 // ============ Helpers ============
 const toParas = (text) => (Array.isArray(text) ? text : String(text == null ? '' : text).split('\n'));
@@ -135,7 +129,6 @@ function cell(content, widthDxa, opts = {}) {
 const row = (cells, opts = {}) => new TableRow({
   cantSplit: true,
   tableHeader: !!opts.header,
-  height: opts.minHeight ? { value: opts.minHeight, rule: HeightRule.ATLEAST } : undefined,
   children: cells,
 });
 
@@ -146,51 +139,18 @@ const headerRow = (labels, widths) => row(
 
 const table = (widths, rows) => new Table({ width: { size: CONTENT_W, type: WidthType.DXA }, columnWidths: widths, rows });
 
-// Label / value two-column table. Empty value → blank write-in cell.
+// Label / value two-column table.
 const KV_W = [3000, CONTENT_W - 3000];
-function kvTable(rows, opts = {}) {
+function kvTable(rows) {
   return table(KV_W, rows.map((r) => row([
     cell(r.label, KV_W[0], { bold: true, fill: LABEL_FILL }),
     cell(r.value == null ? '' : r.value, KV_W[1]),
-  ], { minHeight: (r.value ? 0 : opts.blankHeight) || 0 })));
-}
-
-// A bordered write-in box of a given minimum height (DXA; 1440 = 1").
-function writeInBox(minHeight, hint) {
-  return table([CONTENT_W], [row([
-    cell(hint ? textParas(hint, { italics: true, color: LAB_HINT, size: 16 }) : '', CONTENT_W),
-  ], { minHeight })]);
-}
-
-// Paragraph containing "☐ label   ☐ label ..." checkbox choices.
-function checkChoices(labels, opts = {}) {
-  const runs = [];
-  labels.forEach((l, i) => {
-    if (i) runs.push(new TextRun({ text: opts.vertical ? '' : '     ', size: opts.size || 18 }));
-    runs.push(new TextRun({ text: BOX, size: (opts.size || 18) + 4 }));
-    runs.push(new TextRun({ text: ' ' + l, size: opts.size || 18, bold: !!opts.bold }));
-  });
-  return new Paragraph({ spacing: { before: 20, after: 20 }, alignment: opts.align, children: runs });
+  ])));
 }
 
 const h1 = (text) => new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { before: 240, after: 100 }, children: [new TextRun({ text, bold: true, size: 26 })] });
 const h2 = (text) => new Paragraph({ heading: HeadingLevel.HEADING_2, spacing: { before: 240, after: 80 }, children: [new TextRun({ text, bold: true, size: 22 })] });
-const note = (text) => new Paragraph({ keepNext: true, keepLines: true, spacing: { before: 20, after: 100 }, children: [new TextRun({ text, italics: true, size: 16, color: LAB_HINT })] });
-const spacer = () => new Paragraph({ spacing: { before: 0, after: 0 }, children: [] });
-
-// Full-width dark banner marking "who fills this part in".
-function partBanner(title, who) {
-  return table([CONTENT_W], [row([new TableCell({
-    borders,
-    width: { size: CONTENT_W, type: WidthType.DXA },
-    shading: { fill: PART_FILL, type: ShadingType.CLEAR },
-    margins: { top: 100, bottom: 100, left: 140, right: 140 },
-    children: [new Paragraph({ children: [
-      new TextRun({ text: title, bold: true, size: 26, color: 'FFFFFF' }),
-      new TextRun({ text: `   —   ${who}`, italics: true, size: 18, color: 'FFFFFF' }),
-    ] })],
-  })])]);
-}
+const note = (text) => new Paragraph({ keepNext: true, keepLines: true, spacing: { before: 20, after: 100 }, children: [new TextRun({ text, italics: true, size: 16, color: NOTE_COLOR })] });
 
 // ============ Compose ============
 const children = [];
@@ -200,17 +160,14 @@ children.push(new Paragraph({ spacing: { before: 0, after: 60 }, alignment: Alig
 if (meta.subtitle) children.push(new Paragraph({ spacing: { before: 0, after: 160 }, alignment: AlignmentType.CENTER, children: [new TextRun({ text: meta.subtitle, size: 22 })] }));
 if ((meta.coverRows || []).length) children.push(kvTable(meta.coverRows));
 
-// ---- PART 1 — REQUEST ----
-children.push(spacer());
-children.push(partBanner('PART 1 — REQUEST', meta.part1Who || 'completed by requester'));
 
-// 1.1 Device under test
-children.push(h1('1.1  Device Under Test'));
+// 1. Device under test
+children.push(h1('1  Device Under Test'));
 children.push(kvTable(data.deviceUnderTest || []));
 
-// 1.2 Why — purpose & what we hope to learn
+// 2. Why — purpose & what we hope to learn
 const purpose = data.purpose || {};
-children.push(h1('1.2  Purpose — Why Are We Testing?'));
+children.push(h1('2  Purpose — Why Are We Testing?'));
 if (purpose.background) children.push(...textParas(purpose.background, { size: 20, after: 80 }));
 if (objectives.length) {
   children.push(h2('What I hope to learn'));
@@ -224,15 +181,15 @@ if (objectives.length) {
   ]));
 }
 
-// 1.3 Approach — broad strokes
+// 3. Approach — broad strokes
 if (data.approach) {
-  children.push(h1('1.3  Test Approach — Broad Strokes'));
+  children.push(h1('3  Test Approach — Broad Strokes'));
   children.push(...textParas(data.approach, { size: 20, after: 80 }));
 }
 
-// 1.4 Envisioned tests
+// 4. Envisioned tests
 if (tests.length) {
-  children.push(h1('1.4  Envisioned Tests'));
+  children.push(h1('4  Envisioned Tests'));
   children.push(note('High-level only — the lab owns the detailed method, setup, and equipment. Pass / fail describes the outcome, not the procedure.'));
   const T_W = [600, 1800, 2800, 2512, 2512];
   children.push(table(T_W, [
@@ -250,10 +207,10 @@ if (tests.length) {
   ]));
 }
 
-// 1.5 Overall success criteria
+// 5. Overall success criteria
 const sc = data.successCriteria || {};
 if (sc.pass || sc.fail || sc.inconclusive) {
-  children.push(h1('1.5  Overall Pass / Fail'));
+  children.push(h1('5  Overall Pass / Fail'));
   children.push(kvTable([
     sc.pass && { label: 'PASS looks like', value: sc.pass },
     sc.fail && { label: 'FAIL looks like', value: sc.fail },
@@ -261,84 +218,13 @@ if (sc.pass || sc.fail || sc.inconclusive) {
   ].filter(Boolean)));
 }
 
-// 1.6 Constraints / notes for the lab
+// 6. Constraints / notes for the lab
 if ((data.constraints || []).length) {
-  children.push(h1('1.6  Constraints & Notes for the Lab'));
+  children.push(h1('6  Constraints & Notes for the Lab'));
   for (const c of data.constraints) {
     children.push(new Paragraph({ bullet: { level: 0 }, spacing: { before: 20, after: 20 }, children: [new TextRun({ text: c, size: 20 })] }));
   }
 }
-
-// ---- PART 2 — LAB EXECUTION ----
-const lab = data.lab || {};
-children.push(new Paragraph({ children: [new PageBreak()] }));
-children.push(partBanner('PART 2 — LAB EXECUTION', meta.part2Who || 'completed by lab'));
-
-// 2.1 Intake
-children.push(h1('2.1  Intake'));
-const intakeRows = (lab.intakeRows || [
-  'Received by', 'Date received', 'Unit(s) received — SN', 'Condition on arrival',
-  'Assigned technician', 'Planned start', 'Planned completion',
-]).map((label) => ({ label, value: '' }));
-children.push(kvTable(intakeRows, { blankHeight: 400 }));
-
-// 2.2 Test log
-children.push(h1('2.2  Test Plan & Log'));
-children.push(note('One row per specific test. Link each to the request item it addresses (R#), or "—" for tests the lab adds. Describe method / setup / equipment briefly; attach data files and photos and reference them in the notes.'));
-const L_W = [600, 700, 2900, 1100, 3400, 1524];
-const blankRows = lab.blankRows ?? 6;
-const logRow = (i, reqId) => {
-  const fill = i % 2 ? ALT_FILL : undefined;
-  return row([
-    cell(`L${i + 1}`, L_W[0], { bold: true, fill }),
-    cell(reqId || '', L_W[1], { fill, align: AlignmentType.CENTER }),
-    cell('', L_W[2], { fill }),
-    cell('', L_W[3], { fill }),
-    cell('', L_W[4], { fill }),
-    cell([checkChoices(['Pass']), checkChoices(['Fail'])], L_W[5], { fill }),
-  ], { minHeight: lab.logRowHeight || 900 });
-};
-const logRows = [];
-tests.forEach((t, i) => logRows.push(logRow(i, t.id)));
-for (let j = 0; j < blankRows; j++) logRows.push(logRow(tests.length + j, ''));
-children.push(table(L_W, [
-  headerRow(['Ref', 'Req.', 'Test performed (method / setup)', 'Date(s)', 'Results & notes', 'Result'], L_W),
-  ...logRows,
-]));
-
-// 2.3 Findings vs. objectives
-if (objectives.length) {
-  children.push(h1('2.3  Findings vs. Objectives'));
-  children.push(note('Answer each question from section 1.2 in a sentence or two, citing the supporting L# rows.'));
-  const F_W = [700, 3800, CONTENT_W - 4500];
-  children.push(table(F_W, [
-    headerRow(['#', 'Question / objective', 'What we learned'], F_W),
-    ...objectives.map((o, i) => row([
-      cell(`Q${i + 1}`, F_W[0], { bold: true, align: AlignmentType.CENTER }),
-      cell(o, F_W[1], { size: 16, color: '404040' }),
-      cell('', F_W[2]),
-    ], { minHeight: 800 })),
-  ]));
-}
-
-// 2.4 Observations / deviations
-children.push(h1('2.4  Observations, Anomalies & Deviations'));
-children.push(writeInBox(lab.notesHeight || 2400, 'Anything unexpected, deviations from the request, equipment issues, damage, or ideas for follow-up testing.'));
-
-// 2.5 Overall result
-children.push(h1('2.5  Overall Result'));
-children.push(checkChoices(['PASS', 'FAIL', 'INCONCLUSIVE'], { bold: true, size: 22 }));
-children.push(note('Judged against section 1.5.'));
-children.push(writeInBox(1400, 'Summary / recommendation'));
-
-// 2.6 Sign-off
-children.push(h1('2.6  Sign-off'));
-const S_W = [2900, 2800, 2800, 1724];
-const signers = lab.signers || ['Lab technician', 'Lab lead / reviewer', 'Requester — results accepted'];
-children.push(table(S_W, [
-  headerRow(['Role', 'Name', 'Signature', 'Date'], S_W),
-  ...signers.map((r) => row([cell(r, S_W[0], { bold: true, fill: LABEL_FILL }), cell('', S_W[1]), cell('', S_W[2]), cell('', S_W[3])], { minHeight: 500 })),
-]));
 
 // ============ Document ============
 const doc = new Document({
@@ -358,31 +244,9 @@ const doc = new Document({
   }],
 });
 
-// ============ Post-process: every ☐ run → Word content-control checkbox ============
-async function injectCheckboxControls(buf) {
-  const zip = await JSZip.loadAsync(buf);
-  let xml = await zip.file('word/document.xml').async('string');
-  const w14Ns = 'xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"';
-  if (!xml.includes(w14Ns)) xml = xml.replace(/<w:document\b/, `<w:document ${w14Ns}`);
-  // Match a single <w:r> (not <w:rPr>) whose only text is ☐, without spanning into other runs.
-  const runRe = /<w:r(?:\s[^>]*)?>(?:(?!<\/w:r>)[\s\S])*?<w:t[^>]*>(?:☐|&#9744;|&#x2610;)<\/w:t>(?:(?!<\/w:r>)[\s\S])*?<\/w:r>/gi;
-  let id = 50000, count = 0;
-  xml = xml.replace(runRe, (runXml) => {
-    count++;
-    return '<w:sdt><w:sdtPr><w:rPr/>' + `<w:id w:val="${id++}"/>` +
-      '<w14:checkbox><w14:checked w:val="0"/>' +
-      '<w14:checkedState w:val="2612" w:font="MS Gothic"/>' +
-      '<w14:uncheckedState w:val="2610" w:font="MS Gothic"/>' +
-      `</w14:checkbox></w:sdtPr><w:sdtContent>${runXml}</w:sdtContent></w:sdt>`;
-  });
-  zip.file('word/document.xml', xml);
-  return { buf: await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' }), count };
-}
-
-Packer.toBuffer(doc).then(async (buf) => {
-  const { buf: finalBuf, count } = await injectCheckboxControls(buf);
-  fs.writeFileSync(OUT, finalBuf);
-  console.log(`Wrote ${OUT} (${finalBuf.length} bytes); ${tests.length} envisioned test(s), ${count} checkboxes.`);
+Packer.toBuffer(doc).then((buf) => {
+  fs.writeFileSync(OUT, buf);
+  console.log(`Wrote ${OUT} (${buf.length} bytes); ${tests.length} envisioned test(s).`);
 }).catch((err) => {
   console.error(err);
   process.exit(1);
