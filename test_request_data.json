@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "revision": "1.00",
+    "draftStatus": "Draft",
+    "date": "11/20/2026",
+    "title": "R&D Test Request",
+    "descriptor": "\r\n",
+    "headerLine": "Test Request — Rev {revision} ({draftStatus})",
+    "creator": "Electronics Engineering - Kane",
+    "coverRows": [
+      {"label": "Document Type", "value": "Test Request"},
+      {"label": "Unit Under Test (UUT)", "value": "Q-PAC Fan Controller — complete assembly (PN 1704165, REV3, PCBs epoxy entombed): enclosure, MIBs, bus bar + fuses, connectors (CN1-CN5 and internal harnesses), pressure-transducer air tubes, wiring"},
+      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover."},
+      {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
+      {"label": "Date", "value": "________________________"},
+      {"label": "Tester", "value": "________________________"},
+      {"label": "Reviewer / Sign-off", "value": "________________________"},
+      {"label": "Owner (Engineering)", "value": "Electronics Engineering"}
+    ]
+  },
+  "externalRefs": [
+      {
+        "sectionLetter": "A",
+        "code": "mainboard_dvt",
+        "title": "Main Board DVT",
+        "intro": "PCB-level qualification of bare mainboard owned by external Main Board DVT. This document begins at assembled-controller boundary; bare-board electrical functional.",
+        "linkPlaceholder": "https://teamq-pac.atlassian.net/wiki/x/AgCEIQE",
+        "passCriteria": "Signed Main Board DVT on record for mainboard serial number installed in this Fan Controller assembly. Signed copy attached to this run as artifact. Section B does not begin until Section A artifact is present.",
+        "attestHeaders": ["Mainboard SN", "Main Board DVT signed (date / signer)"]
+      },
+      {
+        "sectionLetter": "B",
+        "code": "mib_dvt",
+        "title": "MIB DVT",
+        "intro": "PCB-level qualification of each MIB board owned by external MIB DVT. MIB-board electrical functional, AOI, and SPI-side functional testing owned by that document and not repeated here. This DVT begins MIB coverage at assembled-controller / FCAT-fixture boundary in Section F.",
+        "linkPlaceholder": "https://teamq-pac.atlassian.net/wiki/x/DYB2IQE",
+        "passCriteria": "Signed MIB DVT on record for every MIB serial number installed in this Fan Controller assembly. Signed copies attached to this run as artifacts. Section D does not begin until all MIB DVT artifacts are present.",
+        "attestHeaders": ["MIB SN(s) — list all installed", "MIB DVTs signed (dates / signers)"]
+      }
+  ],
+  "sections": [
+    {"id":"C","code":"asdf","name":"sadfasdf","title":"asdfasdf","intro":" "},
+    {"id":"D","code":"asdf","name":"asdfasdf","title":"asdfasdf","intro":" "}
+  ],
+    "steps": [
+    {"ref":"C.1","header":"asdf","brief":"asdf.","criteria":"asdf","measure":""},
+    
+    {"ref":"D.1","header":"asdf","brief":"asdf","criteria":"asdf","measure":""}
+  ]
+}
