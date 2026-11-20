@@ -1,50 +1,84 @@
 {
   "meta": {
-    "revision": "1.00",
+    "title": "R&D TEST REQUEST",
+    "subtitle": "Fan Controller — Assembled-Unit Thermal Margin",
+    "requestId": "TR-2026-001",
+    "revision": "1.0",
     "draftStatus": "Draft",
     "date": "11/20/2026",
-    "title": "R&D Test Request",
-    "descriptor": "\r\n",
-    "headerLine": "Test Request — Rev {revision} ({draftStatus})",
+    "headerLine": "Test Request {requestId} — Rev {revision} ({draftStatus})",
     "creator": "Electronics Engineering - Kane",
     "coverRows": [
-      {"label": "Document Type", "value": "Test Request"},
-      {"label": "Unit Under Test (UUT)", "value": "Q-PAC Fan Controller — complete assembly (PN 1704165, REV3, PCBs epoxy entombed): enclosure, MIBs, bus bar + fuses, connectors (CN1-CN5 and internal harnesses), pressure-transducer air tubes, wiring"},
-      {"label": "Format", "value": "Contents page (clickable TOC) immediately after cover."},
+      {"label": "Request ID", "value": "{requestId}"},
       {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
-      {"label": "Date", "value": "________________________"},
-      {"label": "Tester", "value": "________________________"},
-      {"label": "Reviewer / Sign-off", "value": "________________________"},
-      {"label": "Owner (Engineering)", "value": "Electronics Engineering"}
+      {"label": "Requester", "value": "Kane Anderson — Electronics Engineering"},
+      {"label": "Project / ticket", "value": "Fan Controller REV3"},
+      {"label": "Priority", "value": "Normal"},
+      {"label": "Results needed by", "value": "________________________"}
     ]
   },
-  "externalRefs": [
-      {
-        "sectionLetter": "A",
-        "code": "mainboard_dvt",
-        "title": "Main Board DVT",
-        "intro": "PCB-level qualification of bare mainboard owned by external Main Board DVT. This document begins at assembled-controller boundary; bare-board electrical functional.",
-        "linkPlaceholder": "https://teamq-pac.atlassian.net/wiki/x/AgCEIQE",
-        "passCriteria": "Signed Main Board DVT on record for mainboard serial number installed in this Fan Controller assembly. Signed copy attached to this run as artifact. Section B does not begin until Section A artifact is present.",
-        "attestHeaders": ["Mainboard SN", "Main Board DVT signed (date / signer)"]
-      },
-      {
-        "sectionLetter": "B",
-        "code": "mib_dvt",
-        "title": "MIB DVT",
-        "intro": "PCB-level qualification of each MIB board owned by external MIB DVT. MIB-board electrical functional, AOI, and SPI-side functional testing owned by that document and not repeated here. This DVT begins MIB coverage at assembled-controller / FCAT-fixture boundary in Section F.",
-        "linkPlaceholder": "https://teamq-pac.atlassian.net/wiki/x/DYB2IQE",
-        "passCriteria": "Signed MIB DVT on record for every MIB serial number installed in this Fan Controller assembly. Signed copies attached to this run as artifacts. Section D does not begin until all MIB DVT artifacts are present.",
-        "attestHeaders": ["MIB SN(s) — list all installed", "MIB DVTs signed (dates / signers)"]
-      }
+
+  "deviceUnderTest": [
+    {"label": "Device", "value": "Q-PAC Fan Controller — complete assembly: enclosure, MIBs, bus bar + fuses, connectors (CN1–CN5 and internal harnesses), pressure-transducer air tubes, wiring"},
+    {"label": "Part number / revision", "value": "PN 1704165, REV3 (PCBs epoxy entombed)"},
+    {"label": "Quantity / serial numbers", "value": "2 units — SNs to be recorded by lab at intake"},
+    {"label": "Configuration", "value": "Production firmware; no modifications"},
+    {"label": "Handling / disposition", "value": "Return to Electronics Engineering after test. Do not open the enclosure."},
+    {"label": "Reference documents", "value": "Fan Controller DVT; Main Board DVT (https://teamq-pac.atlassian.net/wiki/x/AgCEIQE); MIB DVT (https://teamq-pac.atlassian.net/wiki/x/DYB2IQE)"}
   ],
-  "sections": [
-    {"id":"C","code":"asdf","name":"sadfasdf","title":"asdfasdf","intro":" "},
-    {"id":"D","code":"asdf","name":"asdfasdf","title":"asdfasdf","intro":" "}
+
+  "purpose": {
+    "background": "EXAMPLE CONTENT — replace with the real reason for this request. The REV3 assembly entombs the PCBs in epoxy, which changes how heat leaves the boards. Bench DVT confirms function at room temperature; we have not yet looked at how much thermal headroom the full assembly has under sustained load.",
+    "objectives": [
+      "Does the assembled controller run at full rated load for an extended period without derating, faults, or resets?",
+      "Where are the hottest points on the assembly, and how close are they to component limits?",
+      "Does the epoxy entombment change thermal behavior enough to matter versus the previous revision?"
+    ]
+  },
+
+  "approach": [
+    "Treat this as characterization first, pass/fail second — I want to understand the thermal picture, not just get a green check.",
+    "Run the assembly at full rated load until temperatures stabilize, then push ambient up in steps toward the rated maximum. A prior-revision unit run side-by-side would make a useful baseline if one is available.",
+    "Stop at the rated maximum ambient; this is not a test-to-failure."
   ],
-    "steps": [
-    {"ref":"C.1","header":"asdf","brief":"asdf.","criteria":"asdf","measure":""},
-    
-    {"ref":"D.1","header":"asdf","brief":"asdf","criteria":"asdf","measure":""}
-  ]
+
+  "envisionedTests": [
+    {
+      "id": "R1",
+      "name": "Sustained full-load run",
+      "learn": "Whether the controller holds full output continuously at room ambient.",
+      "pass": "Runs the full duration with no faults, resets, or output derating.",
+      "fail": "Any unexpected fault, reset, or drop in output."
+    },
+    {
+      "id": "R2",
+      "name": "Hot-spot survey",
+      "learn": "Where heat concentrates on the assembly and how much margin each hot spot has.",
+      "pass": "All measured points stay comfortably below component ratings.",
+      "fail": "Any point at or near a component rating, or a hot spot we didn't expect."
+    },
+    {
+      "id": "R3",
+      "name": "Elevated-ambient step-up",
+      "learn": "How behavior changes as ambient approaches the rated maximum.",
+      "pass": "Full function at rated max ambient; temperatures rise predictably.",
+      "fail": "Faults, derating, or runaway temperature before rated max ambient."
+    }
+  ],
+
+  "successCriteria": {
+    "pass": "Every envisioned test passes and the lab can identify the top hot spots with margin to spare. We can release REV3 without thermal changes.",
+    "fail": "Any fault/derating at or below rated conditions, or any component at its limit. Design change needed before release.",
+    "inconclusive": "Results pass but margin is thin or measurements are noisy — need more units or a refined setup."
+  },
+
+  "constraints": [
+    "Do not open the enclosure or remove epoxy.",
+    "Do not exceed the rated maximum ambient temperature.",
+    "Please send back raw temperature logs and photos of probe placement."
+  ],
+
+  "lab": {
+    "blankRows": 4
+  }
 }

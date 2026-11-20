@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "R&D TEST REQUEST",
+    "subtitle": "<Short name for this request, e.g. 'Fan Controller thermal margin'>",
+    "requestId": "<TR-YYYY-###>",
+    "revision": "1.0",
+    "draftStatus": "Draft",
+    "date": "",
+    "headerLine": "Test Request {requestId} — Rev {revision} ({draftStatus})",
+    "creator": "<Requesting team>",
+    "coverRows": [
+      {"label": "Request ID", "value": "{requestId}"},
+      {"label": "Revision", "value": "{revision} ({draftStatus}) — {date}"},
+      {"label": "Requester", "value": "<Name, team>"},
+      {"label": "Project / ticket", "value": "<Project name or Jira link>"},
+      {"label": "Priority", "value": "<Low / Normal / High — and why>"},
+      {"label": "Results needed by", "value": "<Date — and what decision it feeds>"}
+    ]
+  },
+
+  "deviceUnderTest": [
+    {"label": "Device", "value": "<What it is>"},
+    {"label": "Part number / revision", "value": "<PN, rev>"},
+    {"label": "Quantity / serial numbers", "value": "<How many units, SNs if known>"},
+    {"label": "Configuration", "value": "<Firmware version, build options, mods, anything non-standard>"},
+    {"label": "Handling / disposition", "value": "<Fragile? Return after test? OK to destroy?>"},
+    {"label": "Reference documents", "value": "<Datasheets, drawings, prior test reports>"}
+  ],
+
+  "purpose": {
+    "background": "<Why are we testing? What prompted this — a design change, field issue, new requirement, open risk?>",
+    "objectives": [
+      "<A question you want answered, e.g. 'Does X still meet Y after Z?'>",
+      "<Another question>"
+    ]
+  },
+
+  "approach": [
+    "<Broad strokes: how you're thinking about testing this. Stress vs. characterize? Compare against a baseline unit? Test to failure or to a limit? Keep it high level — the lab owns the detailed method.>"
+  ],
+
+  "envisionedTests": [
+    {
+      "id": "R1",
+      "name": "<Test area>",
+      "learn": "<What this test should tell us>",
+      "pass": "<What a good outcome looks like>",
+      "fail": "<What a bad outcome looks like>"
+    }
+  ],
+
+  "successCriteria": {
+    "pass": "<Overall: what result lets us move forward?>",
+    "fail": "<Overall: what result means we need to change something?>",
+    "inconclusive": "<Optional: what result means we need more data?>"
+  },
+
+  "constraints": [
+    "<Limits not to exceed, safety notes, things the lab should NOT do, data you need back (raw files, photos)>"
+  ],
+
+  "lab": {
+    "blankRows": 6
+  }
+}

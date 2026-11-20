@@ -4,7 +4,8 @@
   "description": "Generate compact table-format Design Verification Test documents (.docx) from a JSON data file. Clickable TOC, Word content-control checkboxes, REF mirrors.",
   "main": "build_dvt.js",
   "scripts": {
-    "build": "node build_dvt.js"
+    "build": "node build_dvt.js",
+    "request": "node build_test_request.js"
   },
   "engines": {
     "node": ">=18"
